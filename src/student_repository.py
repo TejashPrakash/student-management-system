@@ -56,3 +56,151 @@ def insert_student(student: Student) -> None:
             cursor.close()
         if connection:
             connection.close()
+
+def get_student_by_roll_no(roll_no: int) -> Student | None:
+    
+    connection = None
+    cursor = None
+    
+    try:
+        connection = connect_database()
+        
+        if connection is None:
+            return
+        
+        cursor = connection.cursor()
+    
+        query = """SELECT * FROM students WHERE roll_no = %s"""
+        
+        cursor.execute(query, (roll_no,))
+        row = cursor.fetchone()
+        
+        if row:
+            student = Student(
+                student_id=row[0],
+                first_name=row[1],
+                last_name=row[2],
+                gender=row[3],
+                dob=row[4],
+                class_name=row[5],
+                section=row[6],
+                roll_no=row[7],
+                email=row[8],
+                phone=row[9],
+                address=row[10],
+                admission_date=row[11]
+                )
+            return student
+        else:
+            print("Student not found.")
+            return None
+            
+    except Error as e:
+        print(f"An error occured: {e}")
+        if connection:
+            connection.rollback()
+            
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+            
+def get_student_by_id(student_id: int) -> Student | None:
+    
+    connection = None
+    cursor = None
+    
+    try:
+        connection = connect_database()
+        
+        if connection is None:
+            return
+        
+        cursor = connection.cursor()
+    
+        query = """SELECT * FROM students WHERE student_id = %s"""
+        
+        cursor.execute(query, (student_id,))
+        row = cursor.fetchone()
+        
+        if row:
+            student = Student(
+                student_id=row[0],
+                first_name=row[1],
+                last_name=row[2],
+                gender=row[3],
+                dob=row[4],
+                class_name=row[5],
+                section=row[6],
+                roll_no=row[7],
+                email=row[8],
+                phone=row[9],
+                address=row[10],
+                admission_date=row[11]
+                )
+            return student
+        else:
+            print("Student not found.")
+            return None
+            
+    except Error as e:
+        print(f"An error occured: {e}")
+        if connection:
+            connection.rollback()
+            
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+            
+def get_all_students() -> list[Student]:
+    
+    connection = None
+    cursor = None
+    
+    try:
+        connection = connect_database()
+        
+        if connection is None:
+            return
+        
+        cursor = connection.cursor()
+    
+        query = """SELECT * FROM students;"""
+        
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        
+        student_list=[]
+        
+        for row in rows:
+            student = Student(
+                student_id=row[0],
+                first_name=row[1],
+                last_name=row[2],
+                gender=row[3],
+                dob=row[4],
+                class_name=row[5],
+                section=row[6],
+                roll_no=row[7],
+                email=row[8],
+                phone=row[9],
+                address=row[10],
+                admission_date=row[11]
+                )
+            student_list.append(student)
+        
+        return student_list
+    
+    except Error as e:
+        print(f"An error occured: {e}")
+        if connection:
+            connection.rollback()
+            
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()

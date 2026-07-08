@@ -18,4 +18,19 @@ if __name__ == "__main__":
         )
         
     student.display_info()
-    insert_student(student)
+    insert_student(student)    # insert_student(student)
+
+from student_repository import get_student_by_roll_no
+
+student = get_student_by_roll_no(1)
+
+if student:
+    student.display_info()
+    
+from student_repository import get_all_students
+
+students = get_all_students()
+
+if students:
+    for student in students:
+        student.display_info()
