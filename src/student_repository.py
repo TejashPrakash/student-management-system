@@ -204,3 +204,102 @@ def get_all_students() -> list[Student]:
             cursor.close()
         if connection:
             connection.close()
+            
+def update_student(student: Student) -> bool:
+    
+    connection = None
+    cursor = None
+    
+    try:
+        connection = connect_database()
+        
+        if connection is None:
+            return False
+        
+        cursor = connection.cursor()
+        
+        query ="""UPDATE students SET 
+            first_name = %s,
+            last_name = %s,
+            gender = %s,
+            dob = %s,
+            class = %s,
+            section = %s,
+            roll_no = %s,
+            email = %s,
+            phone = %s,
+            address = %s,
+            admission_date = %s
+            WHERE student_id = %s;"""
+        
+        values = (student.first_name,
+                  student.last_name,
+                  student.gender,
+                  student.dob,
+                  student.class_name,
+                  student.section,
+                  student.roll_no,
+                  student.email,
+                  student.phone,
+                  student.address,
+                  student.admission_date,
+                  student.student_id
+                )
+        
+        cursor.execute(query, values)
+        
+        connection.commit()
+        
+        if cursor.rowcount > 0:
+            print(f"Student '{student.get_full_name()}' updated successfully.")
+            return True
+        else:
+            print("No student record was Updated(ID might not exist).")
+            return False
+    
+    except Error as e:
+        print(f"An error occured: {e}")
+        if connection:
+            connection.rollback()
+            
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+            
+def delete_student(student_id: int) -> bool:
+    
+    connection = None
+    cursor = None
+    
+    try:
+        connection = connect_database()
+        
+        if connection is None:
+            return False
+        
+        cursor = connection.cursor()
+        
+        query = """DELETE FROM students WHERE student_id = %s;"""
+        
+        cursor.execute(query, (student_id,))
+        
+        connection.commit()
+        
+        if cursor.rowcount > 0:
+            return True
+        else:
+            print(f"No student found with ID {student_id} to delete.")
+            return False
+    
+    except Error as e:
+        print(f"An error occured: {e}")
+        if connection:
+            connection.rollback()
+            
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
