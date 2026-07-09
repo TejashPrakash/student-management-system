@@ -6,7 +6,7 @@ Stores database connection details.
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "Tejash@2007",
+    "password": "YOUR_PASSWORD",
     "database": "edutrack",
     "port": 3306
 }

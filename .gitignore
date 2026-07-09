@@ -1,13 +1,28 @@
-# Spyder
-.spyproject/
-
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Spyder
+.spyproject/
 
 # Jupyter
 .ipynb_checkpoints/
 
-# Environment
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Environment files
 .env
-venv/
