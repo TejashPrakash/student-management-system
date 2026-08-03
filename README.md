@@ -18,7 +18,7 @@ A console-based Student Management System developed in Python using MySQL. This 
 
 ## 🛠️ Technologies Used
 
-- Python 3
+- Python 3.10 or later
 - MySQL
 - mysql-connector-python
 - Spyder IDE

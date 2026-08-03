@@ -2,7 +2,7 @@ from database import connect_database
 from student import Student
 from mysql.connector import Error
 
-def insert_student(student: Student) -> None:
+def insert_student(student: Student) -> bool:
     
     connection = None
     cursor = None
@@ -45,11 +45,13 @@ def insert_student(student: Student) -> None:
         connection.commit()
         
         print(f"Success: Student '{student.get_full_name()}' has been added to the database.")
+        return True
         
     except Error as e:
         print(f"An error occured: {e}")
         if connection:
             connection.rollback()
+        return False
             
     finally:
         if cursor:
