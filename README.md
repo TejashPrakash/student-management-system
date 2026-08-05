@@ -61,6 +61,10 @@ Student-Management-System/
 
 - Configuration now reads database credentials from environment variables. See `.env.example` for names.
 - `student_repository.py` uses dictionary cursors and more robust error handling.
+- Database and repository failures raise the exceptions in `src/errors.py` (`ConfigurationError`,
+    `DatabaseConnectionError`, `StudentRepositoryError`) instead of being turned into
+    `None`/`False`/`[]`, so a failed query is never reported as "no students found".
+    `main.py` catches them per menu action, logs the cause, and keeps the menu running.
 - Added guidance in Installation to avoid storing plaintext credentials in source.
 
 ---
