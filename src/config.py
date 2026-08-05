@@ -1,6 +1,13 @@
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 from errors import ConfigurationError
+
+# Load variables from a local .env at the repository root when present.
+# Real environment variables take precedence over values in the file.
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 TRUTHY = {"1", "true", "yes", "on"}
 
