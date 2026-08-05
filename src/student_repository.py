@@ -54,6 +54,54 @@ def _row_to_student(row: dict) -> Student:
         ) from exc
 
 
+# Column order shared by INSERT and UPDATE. The database column is `class`;
+# the matching Student attribute is `class_name`.
+_STUDENT_COLUMNS = (
+    "first_name",
+    "last_name",
+    "gender",
+    "dob",
+    "class",
+    "section",
+    "roll_no",
+    "email",
+    "phone",
+    "address",
+    "admission_date",
+)
+
+_INSERT_QUERY = (
+    "INSERT INTO students ("
+    + ", ".join(f"`{column}`" for column in _STUDENT_COLUMNS)
+    + ") VALUES ("
+    + ", ".join(["%s"] * len(_STUDENT_COLUMNS))
+    + ")"
+)
+
+_UPDATE_QUERY = (
+    "UPDATE students SET "
+    + ", ".join(f"`{column}` = %s" for column in _STUDENT_COLUMNS)
+    + " WHERE student_id = %s"
+)
+
+
+def _student_values(student: Student) -> tuple:
+    """Return the student's field values in _STUDENT_COLUMNS order."""
+    return (
+        student.first_name,
+        student.last_name,
+        student.gender,
+        student.dob,
+        student.class_name,
+        student.section,
+        student.roll_no,
+        student.email,
+        student.phone,
+        student.address,
+        student.admission_date,
+    )
+
+
 def insert_student(student: Student) -> int:
     """Insert a student and return the generated student id.
 
@@ -62,35 +110,8 @@ def insert_student(student: Student) -> int:
         StudentRepositoryError: the insert failed.
     """
     with _cursor() as (connection, cursor):
-        query = """INSERT INTO students (first_name,
-            last_name,
-            gender,
-            dob,
-            `class`,
-            section,
-            roll_no,
-            email,
-            phone,
-            address,
-            admission_date
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-
-        values = (
-            student.first_name,
-            student.last_name,
-            student.gender,
-            student.dob,
-            student.class_name,
-            student.section,
-            student.roll_no,
-            student.email,
-            student.phone,
-            student.address,
-            student.admission_date,
-        )
-
         try:
-            cursor.execute(query, values)
+            cursor.execute(_INSERT_QUERY, _student_values(student))
             connection.commit()
         except Error as exc:
             _rollback(connection)
@@ -148,37 +169,8 @@ def get_all_students() -> List[Student]:
 def update_student(student: Student) -> bool:
     """Update a student; return False when no record matched the student id."""
     with _cursor(dictionary=False) as (connection, cursor):
-        query = """UPDATE students SET
-            first_name = %s,
-            last_name = %s,
-            gender = %s,
-            dob = %s,
-            `class` = %s,
-            section = %s,
-            roll_no = %s,
-            email = %s,
-            phone = %s,
-            address = %s,
-            admission_date = %s
-            WHERE student_id = %s"""
-
-        values = (
-            student.first_name,
-            student.last_name,
-            student.gender,
-            student.dob,
-            student.class_name,
-            student.section,
-            student.roll_no,
-            student.email,
-            student.phone,
-            student.address,
-            student.admission_date,
-            student.student_id,
-        )
-
         try:
-            cursor.execute(query, values)
+            cursor.execute(_UPDATE_QUERY, _student_values(student) + (student.student_id,))
             connection.commit()
         except Error as exc:
             _rollback(connection)
