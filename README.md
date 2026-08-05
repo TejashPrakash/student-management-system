@@ -83,10 +83,14 @@ git clone https://github.com/TejashPrakash/student-management-system.git
 cd student-management-system
 ```
 
-3. (Recommended) Configure environment variables
+3. Configure environment variables (required)
 
 - Create a `.env` file locally using `.env.example` as a template, or set the following environment variables in your shell:
     `EDUTRACK_DB_HOST`, `EDUTRACK_DB_USER`, `EDUTRACK_DB_PASSWORD`, `EDUTRACK_DB_NAME`, `EDUTRACK_DB_PORT`
+- `EDUTRACK_DB_PASSWORD` is mandatory. The app refuses to start without it unless you
+  explicitly set `EDUTRACK_ALLOW_EMPTY_PASSWORD=1` for a throwaway local database.
+- Set `EDUTRACK_DB_SSL_CA` to a CA bundle path to require a verified TLS connection to MySQL.
+- Never commit `.env` or real credentials; use a dedicated least-privilege MySQL user rather than `root`.
 
 4. Install the required packages
 

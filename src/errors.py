@@ -5,7 +5,7 @@ class EduTrackError(Exception):
     """Base class for every error raised by EduTrack."""
 
 
-class ConfigurationError(EduTrackError):
+class ConfigurationError(EduTrackError, RuntimeError):
     """Raised when the database configuration is missing or invalid."""
 
 
