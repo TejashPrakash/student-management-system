@@ -1,78 +1,45 @@
 import sys
-import types
 import unittest
 from pathlib import Path
-from unittest import mock
+from unittest.mock import patch
 
+from mysql.connector import Error
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-# The repository imports ``mysql.connector`` at module load time. CI does not
-# install the driver, so provide a lightweight stub before importing the code
-# under test. These tests exercise logic only and never touch a real database.
-if "mysql.connector" not in sys.modules:
-    connector = types.ModuleType("mysql.connector")
-
-    class Error(Exception):
-        pass
-
-    connector.Error = Error
-    connector.connect = lambda **kwargs: None
-
-    mysql_module = types.ModuleType("mysql")
-    mysql_module.connector = connector
-
-    sys.modules.setdefault("mysql", mysql_module)
-    sys.modules["mysql.connector"] = connector
-
-import database
-import student_repository as repo
+import student_repository
+from errors import StudentRepositoryError
 from student import Student
-
-
-def make_student(student_id=1):
-    return Student(
-        student_id=student_id,
-        first_name="Ann",
-        last_name="Lee",
-        gender="Female",
-        dob="2000-01-01",
-        class_name="10",
-        section="A",
-        roll_no=5,
-        email="ann@example.com",
-        phone="123456",
-        address="1 Main St",
-        admission_date="2020-01-01",
-    )
 
 
 ROW = {
     "student_id": 1,
-    "first_name": "Ann",
-    "last_name": "Lee",
+    "first_name": "Ada",
+    "last_name": "Lovelace",
     "gender": "Female",
-    "dob": "2000-01-01",
+    "dob": "1815-12-10",
     "class": "10",
     "section": "A",
-    "roll_no": 5,
-    "email": "ann@example.com",
-    "phone": "123456",
-    "address": "1 Main St",
-    "admission_date": "2020-01-01",
+    "roll_no": 7,
+    "email": "ada@example.com",
+    "phone": "555",
+    "address": "London",
+    "admission_date": "2024-01-01",
 }
 
 
 class FakeCursor:
-    def __init__(self, row=None, rows=None, rowcount=1):
+    def __init__(self, row=None, rows=None, error=None, rowcount=1, lastrowid=1):
         self._row = row
         self._rows = rows or []
+        self._error = error
         self.rowcount = rowcount
-        self.executed = []
+        self.lastrowid = lastrowid
         self.closed = False
 
-    def execute(self, query, params=None):
-        self.executed.append((query, params))
+    def execute(self, query, values=None):
+        if self._error:
+            raise self._error
 
     def fetchone(self):
         return self._row
@@ -87,9 +54,9 @@ class FakeCursor:
 class FakeConnection:
     def __init__(self, cursor):
         self._cursor = cursor
+        self.closed = False
         self.committed = False
         self.rolled_back = False
-        self.closed = False
 
     def cursor(self, dictionary=False):
         return self._cursor
@@ -104,60 +71,93 @@ class FakeConnection:
         self.closed = True
 
 
-class RepositoryTests(unittest.TestCase):
-    def _patch_connection(self, connection):
-        return mock.patch.object(database, "connect_database", return_value=connection)
+def make_student(student_id=1):
+    return Student(
+        student_id=student_id,
+        first_name="Ada",
+        last_name="Lovelace",
+        gender="Female",
+        dob="1815-12-10",
+        class_name="10",
+        section="A",
+        roll_no=7,
+        email="ada@example.com",
+        phone="555",
+        address="London",
+        admission_date="2024-01-01",
+    )
 
-    def test_insert_student_commits_and_closes(self):
-        cursor = FakeCursor()
-        conn = FakeConnection(cursor)
-        with self._patch_connection(conn):
-            self.assertTrue(repo.insert_student(make_student()))
-        self.assertTrue(conn.committed)
+
+class RepositoryErrorPropagationTests(unittest.TestCase):
+    def _patch_connection(self, cursor):
+        connection = FakeConnection(cursor)
+        patcher = patch.object(
+            student_repository, "connect_database", return_value=connection
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return connection
+
+    def test_query_failure_is_raised_not_reported_as_empty(self):
+        cursor = FakeCursor(error=Error("connection lost"))
+        connection = self._patch_connection(cursor)
+
+        with self.assertRaises(StudentRepositoryError):
+            student_repository.get_all_students()
+
         self.assertTrue(cursor.closed)
-        self.assertTrue(conn.closed)
+        self.assertTrue(connection.closed)
 
-    def test_get_student_by_id_maps_class_column(self):
-        cursor = FakeCursor(row=ROW)
-        conn = FakeConnection(cursor)
-        with self._patch_connection(conn):
-            student = repo.get_student_by_id(1)
+    def test_insert_failure_rolls_back_and_raises(self):
+        cursor = FakeCursor(error=Error("duplicate roll_no"))
+        connection = self._patch_connection(cursor)
+
+        with self.assertRaises(StudentRepositoryError):
+            student_repository.insert_student(make_student(student_id=None))
+
+        self.assertTrue(connection.rolled_back)
+
+    def test_delete_failure_raises_instead_of_returning_false(self):
+        cursor = FakeCursor(error=Error("foreign key constraint"))
+        self._patch_connection(cursor)
+
+        with self.assertRaises(StudentRepositoryError):
+            student_repository.delete_student(1)
+
+    def test_delete_returns_false_when_no_row_matched(self):
+        self._patch_connection(FakeCursor(rowcount=0))
+
+        self.assertFalse(student_repository.delete_student(99))
+
+    def test_update_returns_true_when_a_row_matched(self):
+        self._patch_connection(FakeCursor(rowcount=1))
+
+        self.assertTrue(student_repository.update_student(make_student()))
+
+    def test_missing_student_returns_none(self):
+        self._patch_connection(FakeCursor(row=None))
+
+        self.assertIsNone(student_repository.get_student_by_id(42))
+
+    def test_row_is_mapped_to_a_student(self):
+        self._patch_connection(FakeCursor(row=ROW))
+
+        student = student_repository.get_student_by_roll_no(7)
+
+        self.assertEqual(student.get_full_name(), "Ada Lovelace")
         self.assertEqual(student.class_name, "10")
-        self.assertEqual(student.get_full_name(), "Ann Lee")
 
-    def test_get_all_students_returns_list(self):
-        cursor = FakeCursor(rows=[ROW, ROW])
-        conn = FakeConnection(cursor)
-        with self._patch_connection(conn):
-            students = repo.get_all_students()
-        self.assertEqual(len(students), 2)
+    def test_incomplete_row_raises_a_descriptive_error(self):
+        incomplete = {key: value for key, value in ROW.items() if key != "class"}
+        self._patch_connection(FakeCursor(row=incomplete))
 
-    def test_update_reports_missing_row(self):
-        cursor = FakeCursor(rowcount=0)
-        conn = FakeConnection(cursor)
-        with self._patch_connection(conn):
-            self.assertFalse(repo.update_student(make_student()))
+        with self.assertRaisesRegex(StudentRepositoryError, "class"):
+            student_repository.get_student_by_id(1)
 
-    def test_delete_student_success(self):
-        cursor = FakeCursor(rowcount=1)
-        conn = FakeConnection(cursor)
-        with self._patch_connection(conn):
-            self.assertTrue(repo.delete_student(1))
+    def test_insert_returns_the_new_student_id(self):
+        self._patch_connection(FakeCursor(lastrowid=17))
 
-    def test_error_triggers_rollback(self):
-        cursor = FakeCursor()
-        cursor.execute = mock.Mock(side_effect=database.Error("boom"))
-        conn = FakeConnection(cursor)
-        with self._patch_connection(conn):
-            self.assertFalse(repo.insert_student(make_student()))
-        self.assertTrue(conn.rolled_back)
-        self.assertTrue(conn.closed)
-
-    def test_connection_unavailable_is_handled(self):
-        with self._patch_connection(None):
-            self.assertFalse(repo.insert_student(make_student()))
-            self.assertIsNone(repo.get_student_by_id(1))
-            self.assertEqual(repo.get_all_students(), [])
+        self.assertEqual(student_repository.insert_student(make_student(None)), 17)
 
 
 if __name__ == "__main__":
