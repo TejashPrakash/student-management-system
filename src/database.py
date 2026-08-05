@@ -1,12 +1,12 @@
 import mysql.connector
 from mysql.connector import Error
 
-from config import DB_CONFIG
+from config import get_db_config
 
 def connect_database():
     
     try:
-        connection = mysql.connector.connect(**DB_CONFIG)
+        connection = mysql.connector.connect(**get_db_config())
         
         if connection.is_connected():
             print("Connected successfully to EduTrack database.")
@@ -14,6 +14,9 @@ def connect_database():
         return None
     except Error as e:
         print(f"Error while connecting to MySQL: {e}")
+        return None
+    except RuntimeError as e:
+        print(f"Configuration error: {e}")
         return None
 
 if __name__ == "__main__":
