@@ -1,10 +1,29 @@
 import sys
+import types
 import unittest
 from pathlib import Path
 from unittest import mock
 
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+# The repository imports ``mysql.connector`` at module load time. CI does not
+# install the driver, so provide a lightweight stub before importing the code
+# under test. These tests exercise logic only and never touch a real database.
+if "mysql.connector" not in sys.modules:
+    connector = types.ModuleType("mysql.connector")
+
+    class Error(Exception):
+        pass
+
+    connector.Error = Error
+    connector.connect = lambda **kwargs: None
+
+    mysql_module = types.ModuleType("mysql")
+    mysql_module.connector = connector
+
+    sys.modules.setdefault("mysql", mysql_module)
+    sys.modules["mysql.connector"] = connector
 
 import database
 import student_repository as repo
