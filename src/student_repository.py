@@ -3,6 +3,25 @@ from student import Student
 from mysql.connector import Error
 from typing import Optional, List
 
+
+def _row_to_student(row: dict) -> Student:
+    """Map a dictionary-cursor row from the students table to a Student."""
+    return Student(
+        student_id=row.get("student_id"),
+        first_name=row.get("first_name"),
+        last_name=row.get("last_name"),
+        gender=row.get("gender"),
+        dob=row.get("dob"),
+        class_name=row.get("class"),
+        section=row.get("section"),
+        roll_no=row.get("roll_no"),
+        email=row.get("email"),
+        phone=row.get("phone"),
+        address=row.get("address"),
+        admission_date=row.get("admission_date"),
+    )
+
+
 def insert_student(student: Student) -> bool:
     
     connection = None
