@@ -1,4 +1,5 @@
 from student import Student
+from input_validators import get_positive_int
 from student_repository import (
     insert_student,
     get_student_by_roll_no,
@@ -33,7 +34,7 @@ def main():
             dob = input("Enter Date of Birth (YYYY-MM-DD): ").strip()
             class_name = input("Enter Class: ").strip()
             section = input("Enter Section: ").strip()
-            roll_no = int(input("Enter Roll Number: "))
+            roll_no = get_positive_int("Enter Roll Number: ")
             email = input("Enter Email: ").strip()
             phone = input("Enter Phone Number: ").strip()
             address = input("Enter Address: ")
@@ -53,12 +54,14 @@ def main():
                 address=address,
                 admission_date=admission_date
             )
-            insert_student(student)
-            print("\nStudent added successfully!\n")
+            if insert_student(student):
+                print("\nStudent added successfully!\n")
+            else:
+                print("\nStudent could not be added. Check the error above and try again.\n")
             
         elif choice == "2":
             print("You have selected to search a student by Roll Number")
-            roll_no = int(input("Enter Roll Number: "))
+            roll_no = get_positive_int("Enter Roll Number: ")
         
             student = get_student_by_roll_no(roll_no)
         
@@ -69,7 +72,7 @@ def main():
         
         elif choice == "3":
             print("You have selected to search a student by Student ID.")
-            student_id = int(input("Enter Student ID: "))
+            student_id = get_positive_int("Enter Student ID: ")
             
             student = get_student_by_id(student_id)
             
@@ -89,7 +92,7 @@ def main():
         
         elif choice == "5":
             print("You have selected to update a student.")
-            student_id = int(input("Enter Student ID: "))
+            student_id = get_positive_int("Enter Student ID: ")
             
             student = get_student_by_id(student_id)
             
@@ -103,7 +106,7 @@ def main():
                 dob = input("Enter Date of Birth (YYYY-MM-DD): ").strip()
                 class_name = input("Enter Class: ").strip()
                 section = input("Enter Section: ").strip()
-                roll_no = int(input("Enter Roll Number: "))
+                roll_no = get_positive_int("Enter Roll Number: ")
                 email = input("Enter Email: ").strip()
                 phone = input("Enter Phone Number: ").strip()
                 address = input("Enter Address: ")
@@ -135,7 +138,7 @@ def main():
                 
         elif choice == "6":
             print("You have selected to delete the entry of a student.")
-            student_id = int(input("Enter Student ID: "))
+            student_id = get_positive_int("Enter Student ID: ")
             
             student = get_student_by_id(student_id)
             
