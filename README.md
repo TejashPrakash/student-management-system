@@ -47,56 +47,48 @@ Student-Management-System/
 ```
 
 ---
+## Key changes in this polished version
 
-## ⚙️ Installation
+- Configuration now reads database credentials from environment variables. See `.env.example` for names.
+- `student_repository.py` uses dictionary cursors and more robust error handling.
+- Added guidance in Installation to avoid storing plaintext credentials in source.
 
-### 1. Clone the repository
+---
+
+## ⚙️ Installation (updated)
+
+1. Clone the repository
 
 ```bash
 git clone https://github.com/TejashPrakash/student-management-system.git
 ```
 
-### 2. Navigate to the project folder
+2. Navigate to the project folder
 
 ```bash
 cd student-management-system
 ```
 
-### 3. Install the required package
+3. (Recommended) Configure environment variables
+
+- Create a `.env` file locally using `.env.example` as a template, or set the following environment variables in your shell:
+    `EDUTRACK_DB_HOST`, `EDUTRACK_DB_USER`, `EDUTRACK_DB_PASSWORD`, `EDUTRACK_DB_NAME`, `EDUTRACK_DB_PORT`
+
+4. Install the required packages
 
 ```bash
-pip install mysql-connector-python
+pip install -r requirements.txt
 ```
 
-### 4. Create the database
+5. Create the database
 
-Open MySQL and execute:
+- Run the SQL statements in `database/schema.sql` to create the required tables.
 
-```
-database/schema.sql
-```
-
-### 5. Configure the database
-
-Open `src/config.py` and update your MySQL credentials.
-
-Example:
-
-```python
-DB_CONFIG = {
-    "host": "localhost",
-    "user": "root",
-    "password": "your_password",
-    "database": "edutrack"
-}
-```
-
-### 6. Run the application
+6. Run the application
 
 ```bash
 python src/main.py
 ```
-
 ---
 
 ## 📷 Application Menu
