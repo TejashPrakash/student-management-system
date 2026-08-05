@@ -27,8 +27,19 @@ def run_main(inputs):
     def fake_positive_int(prompt, *args, **kwargs):
         return int(next(stream))
 
+    def fake_text(prompt, *args, **kwargs):
+        return next(stream)
+
+    # main() reads via input() plus several input_validators helpers, each of
+    # which otherwise binds the real builtin input. Patch them all to draw from
+    # one shared iterator so scripted answers are consumed in prompt order.
     with mock.patch.object(main, "input", side_effect=fake_input), \
-            mock.patch.object(main, "get_positive_int", side_effect=fake_positive_int):
+            mock.patch.object(main, "get_positive_int", side_effect=fake_positive_int), \
+            mock.patch.object(main, "get_text", side_effect=fake_text), \
+            mock.patch.object(main, "get_choice", side_effect=fake_text), \
+            mock.patch.object(main, "get_date", side_effect=fake_text), \
+            mock.patch.object(main, "get_email", side_effect=fake_text), \
+            mock.patch.object(main, "get_phone", side_effect=fake_text):
         with redirect_stdout(buffer):
             main.main()
     return buffer.getvalue()
