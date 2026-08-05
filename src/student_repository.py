@@ -3,25 +3,8 @@ from student import Student
 from mysql.connector import Error
 from typing import Optional, List
 
-
-def _row_to_student(row: dict) -> Student:
-    return Student(
-        student_id=row.get("student_id"),
-        first_name=row.get("first_name"),
-        last_name=row.get("last_name"),
-        gender=row.get("gender"),
-        dob=row.get("dob"),
-        class_name=row.get("class") or row.get("class_name"),
-        section=row.get("section"),
-        roll_no=row.get("roll_no"),
-        email=row.get("email"),
-        phone=row.get("phone"),
-        address=row.get("address"),
-        admission_date=row.get("admission_date"),
-    )
-
-
 def insert_student(student: Student) -> bool:
+    
     connection = None
     cursor = None
 
@@ -67,12 +50,14 @@ def insert_student(student: Student) -> bool:
         print(f"Success: Student '{student.get_full_name()}' has been added to the database.")
         return True
 
+        
     except Error as e:
         print(f"An error occurred while inserting student: {e}")
         if connection:
             connection.rollback()
         return False
 
+            
     finally:
         if cursor:
             cursor.close()

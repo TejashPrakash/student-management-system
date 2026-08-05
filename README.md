@@ -14,11 +14,21 @@ A console-based Student Management System developed in Python using MySQL. This 
 - 🖥️ Interactive Console Menu
 - ⚠️ Error Handling and Database Transaction Support
 
+## 🌐 Live Demo
+
+An interactive browser demo is included in the `demo/` folder. Once GitHub Pages
+is enabled, it will be available at:
+
+`https://tejashprakash.github.io/student-management-system/`
+
+The demo stores sample records in the browser only; the full console application
+continues to use MySQL.
+
 ---
 
 ## 🛠️ Technologies Used
 
-- Python 3
+- Python 3.10 or later
 - MySQL
 - mysql-connector-python
 - Spyder IDE
