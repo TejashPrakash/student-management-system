@@ -4,22 +4,28 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from config import get_db_config
+from errors import ConfigurationError
 
 
 class GetDbConfigTests(unittest.TestCase):
     def test_raises_when_password_is_missing(self):
         with mock.patch.dict(os.environ, {}, clear=True):
-            with self.assertRaises(RuntimeError):
+            with self.assertRaises(ConfigurationError):
                 get_db_config()
 
     def test_allows_empty_password_when_explicitly_opted_in(self):
         env = {"EDUTRACK_ALLOW_EMPTY_PASSWORD": "1"}
         with mock.patch.dict(os.environ, env, clear=True):
             self.assertEqual(get_db_config()["password"], "")
+
+    def test_invalid_port_raises_a_configuration_error(self):
+        env = {"EDUTRACK_DB_PASSWORD": "s3cret", "EDUTRACK_DB_PORT": "not-a-port"}
+        with mock.patch.dict(os.environ, env, clear=True):
+            with self.assertRaisesRegex(ConfigurationError, "EDUTRACK_DB_PORT"):
+                get_db_config()
 
     def test_reads_settings_from_environment(self):
         env = {
