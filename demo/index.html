@@ -36,9 +36,10 @@
     .remove:hover { background:#ffe1e6; }
     .notice { display:none; margin:0 0 14px; padding:10px 12px; border-radius:8px; background:#e8f8f0; color:var(--good); font-size:.88rem; }
     .notice.show { display:block; }
+    .notice.error { background:#fff1f3; color:var(--danger); }
     .empty { padding:32px; color:var(--muted); text-align:center; }
     footer { text-align:center; padding:8px 24px 35px; color:var(--muted); font-size:.84rem; }
-    @media (max-width:760px) { header { padding-top:35px; } .grid { grid-template-columns:1fr; } .toolbar { align-items:stretch; flex-direction:column; } .toolbar input { max-width:none; } .card { padding:18px; } table thead { display:none; } table, tbody, tr, td { display:block; width:100%; } tr { position:relative; padding:10px 0; } td { padding:4px 8px; border:0; } td:last-child { position:absolute; right:0; top:8px; } }
+    @media (max-width:760px) { header { padding-top:35px; } .grid { grid-template-columns:1fr; } .toolbar { align-items:stretch; flex-direction:column; } .toolbar input { max-width:none; } .card { padding:18px; } table thead { display:none; } table, tbody, tr, td { display:block; width:100%; } tr { position:relative; padding:10px 0; } td { padding:4px 8px; border:0; } td:last-child { position:absolute; right:0; top:8px; width:auto; } }
   </style>
 </head>
 <body>
@@ -88,10 +89,11 @@
     const notice = document.querySelector("#notice");
 
     function save() { localStorage.setItem(storageKey, JSON.stringify(students)); }
-    function showNotice(message) { notice.textContent = message; notice.classList.add("show"); setTimeout(() => notice.classList.remove("show"), 3000); }
+    function showNotice(message, isError = false) { notice.textContent = message; notice.classList.toggle("error", isError); notice.classList.add("show"); setTimeout(() => notice.classList.remove("show"), 3000); }
     function render() {
       const query = search.value.trim().toLowerCase();
-      const filtered = students.filter(student => Object.values(student).some(value => String(value).toLowerCase().includes(query)));
+      const fields = ["name", "roll", "grade", "email"];
+      const filtered = students.filter(student => fields.some(field => String(student[field] ?? "").toLowerCase().includes(query)));
       records.innerHTML = filtered.map(student => `<tr><td><span class="student">${escapeHtml(student.name)}</span><span class="sub">${escapeHtml(student.email)}</span></td><td>${escapeHtml(student.roll)}</td><td>${escapeHtml(student.grade)}</td><td><button class="remove" data-id="${student.id}" aria-label="Remove ${escapeHtml(student.name)}">Remove</button></td></tr>`).join("");
       count.textContent = `${students.length} student${students.length === 1 ? "" : "s"} saved`;
       empty.hidden = filtered.length > 0;
@@ -100,8 +102,8 @@
     form.addEventListener("submit", event => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(form));
-      if (!/^\d+$/.test(data.roll) || Number(data.roll) < 1) { showNotice("Roll number must be a positive whole number."); return; }
-      if (students.some(student => student.roll === data.roll)) { showNotice("That roll number is already in use."); return; }
+      if (!/^\d+$/.test(data.roll) || Number(data.roll) < 1) { showNotice("Roll number must be a positive whole number.", true); return; }
+      if (students.some(student => student.roll === data.roll)) { showNotice("That roll number is already in use.", true); return; }
       students.push({ id: Date.now(), ...data }); save(); form.reset(); render(); showNotice(`${data.name} was added successfully.`);
     });
     records.addEventListener("click", event => {
