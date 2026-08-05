@@ -8,6 +8,38 @@ from student_repository import (
     update_student,
     delete_student
     )
+
+
+def read_student_details(student_id=None):
+    """Prompt for all student fields and return a populated Student."""
+    first_name = input("Enter First Name: ").strip()
+    last_name = input("Enter Last Name: ").strip()
+    gender = input("Enter Gender (Male/Female/Other): ").strip()
+    dob = input("Enter Date of Birth (YYYY-MM-DD): ").strip()
+    class_name = input("Enter Class: ").strip()
+    section = input("Enter Section: ").strip()
+    roll_no = get_positive_int("Enter Roll Number: ")
+    email = input("Enter Email: ").strip()
+    phone = input("Enter Phone Number: ").strip()
+    address = input("Enter Address: ")
+    admission_date = input("Enter Admission Date (YYYY-MM-DD): ")
+
+    return Student(
+        student_id=student_id,
+        first_name=first_name,
+        last_name=last_name,
+        gender=gender,
+        dob=dob,
+        class_name=class_name,
+        section=section,
+        roll_no=roll_no,
+        email=email,
+        phone=phone,
+        address=address,
+        admission_date=admission_date,
+    )
+
+
 def main():
     
     while True:
@@ -28,32 +60,7 @@ def main():
         choice = input("Enter your choice: ").strip()
         if choice == "1":
             print("You have selected to add a student...")
-            first_name = input("Enter First Name: ").strip()
-            last_name = input("Enter Last Name: ").strip()
-            gender = input("Enter Gender (Male/Female/Other): ").strip()
-            dob = input("Enter Date of Birth (YYYY-MM-DD): ").strip()
-            class_name = input("Enter Class: ").strip()
-            section = input("Enter Section: ").strip()
-            roll_no = get_positive_int("Enter Roll Number: ")
-            email = input("Enter Email: ").strip()
-            phone = input("Enter Phone Number: ").strip()
-            address = input("Enter Address: ")
-            admission_date = input("Enter Admission Date (YYYY-MM-DD): ")
-            
-            student = Student(
-                student_id=None,
-                first_name=first_name,
-                last_name=last_name,
-                gender=gender,
-                dob=dob,
-                class_name=class_name,
-                section=section,
-                roll_no=roll_no,
-                email=email,
-                phone=phone,
-                address=address,
-                admission_date=admission_date
-            )
+            student = read_student_details()
             if insert_student(student):
                 print("\nStudent added successfully!\n")
             else:
@@ -100,32 +107,7 @@ def main():
                 print("\nCurrent Student Details:")
                 student.display_info()
                 print("Enter the Updated Details: ")
-                first_name = input("Enter First Name: ").strip()
-                last_name = input("Enter Last Name: ").strip()
-                gender = input("Enter Gender (Male/Female/Other): ").strip()
-                dob = input("Enter Date of Birth (YYYY-MM-DD): ").strip()
-                class_name = input("Enter Class: ").strip()
-                section = input("Enter Section: ").strip()
-                roll_no = get_positive_int("Enter Roll Number: ")
-                email = input("Enter Email: ").strip()
-                phone = input("Enter Phone Number: ").strip()
-                address = input("Enter Address: ")
-                admission_date = input("Enter Admission Date (YYYY-MM-DD): ")
-                
-                student = Student(
-                    student_id=student_id,
-                    first_name=first_name,
-                    last_name=last_name,
-                    gender=gender,
-                    dob=dob,
-                    class_name=class_name,
-                    section=section,
-                    roll_no=roll_no,
-                    email=email,
-                    phone=phone,
-                    address=address,
-                    admission_date=admission_date
-                )
+                student = read_student_details(student_id)
                 
                 success = update_student(student)
                 
