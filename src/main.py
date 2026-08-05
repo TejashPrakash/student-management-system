@@ -1,5 +1,12 @@
 from student import Student
-from input_validators import get_positive_int
+from input_validators import (
+    get_choice,
+    get_date,
+    get_email,
+    get_phone,
+    get_positive_int,
+    get_text,
+    )
 from student_repository import (
     insert_student,
     get_student_by_roll_no,
@@ -12,17 +19,17 @@ from student_repository import (
 
 def read_student_details(student_id=None):
     """Prompt for all student fields and return a populated Student."""
-    first_name = input("Enter First Name: ").strip()
-    last_name = input("Enter Last Name: ").strip()
-    gender = input("Enter Gender (Male/Female/Other): ").strip()
-    dob = input("Enter Date of Birth (YYYY-MM-DD): ").strip()
-    class_name = input("Enter Class: ").strip()
-    section = input("Enter Section: ").strip()
+    first_name = get_text("Enter First Name: ", 50)
+    last_name = get_text("Enter Last Name: ", 50)
+    gender = get_choice("Enter Gender (Male/Female/Other): ")
+    dob = get_date("Enter Date of Birth (YYYY-MM-DD): ", allow_future=False)
+    class_name = get_text("Enter Class: ", 10)
+    section = get_text("Enter Section: ", 1)
     roll_no = get_positive_int("Enter Roll Number: ")
-    email = input("Enter Email: ").strip()
-    phone = input("Enter Phone Number: ").strip()
-    address = input("Enter Address: ")
-    admission_date = input("Enter Admission Date (YYYY-MM-DD): ")
+    email = get_email("Enter Email: ")
+    phone = get_phone("Enter Phone Number: ")
+    address = get_text("Enter Address: ", 500)
+    admission_date = get_date("Enter Admission Date (YYYY-MM-DD): ")
 
     return Student(
         student_id=student_id,
