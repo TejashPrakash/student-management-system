@@ -1,6 +1,6 @@
 # 🎓 EduTrack - Student Management System
 
-A console-based Student Management System developed in Python using MySQL. This project demonstrates Object-Oriented Programming (OOP), database connectivity, and CRUD (Create, Read, Update, Delete) operations.
+A console-based Student Management System built in Python using MySQL. This project demonstrates Object-Oriented Programming (OOP), database connectivity, and CRUD (Create, Read, Update, Delete) operations.
 
 ## 📌 Features
 
@@ -46,52 +46,31 @@ Student-Management-System/
 └── requirements.txt
 ```
 
----
-
 ## ⚙️ Installation
 
-### 1. Clone the repository
+1. Clone the repository
 
 ```bash
 git clone https://github.com/TejashPrakash/student-management-system.git
 ```
 
-### 2. Navigate to the project folder
+2. Navigate to the project folder
 
 ```bash
 cd student-management-system
 ```
 
-### 3. Install the required package
+3. Install the required packages
 
 ```bash
-pip install mysql-connector-python
+pip install -r requirements.txt
 ```
 
-### 4. Create the database
+4. Create the database
 
-Open MySQL and execute:
+- Run the SQL statements in `database/schema.sql` to create the required tables.
 
-```
-database/schema.sql
-```
-
-### 5. Configure the database
-
-Open `src/config.py` and update your MySQL credentials.
-
-Example:
-
-```python
-DB_CONFIG = {
-    "host": "localhost",
-    "user": "root",
-    "password": "your_password",
-    "database": "edutrack"
-}
-```
-
-### 6. Run the application
+5. Run the application
 
 ```bash
 python src/main.py
