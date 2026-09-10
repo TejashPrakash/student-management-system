@@ -14,11 +14,21 @@ A console-based Student Management System built in Python using MySQL. This proj
 - 🖥️ Interactive Console Menu
 - ⚠️ Error Handling and Database Transaction Support
 
+## 🌐 Live Demo
+
+An interactive browser demo is included in the `demo/` folder and deployed to
+GitHub Pages at:
+
+https://tejashprakash.github.io/student-management-system/
+
+The demo stores sample records in the browser only; the full console application
+continues to use MySQL.
+
 ---
 
 ## 🛠️ Technologies Used
 
-- Python 3
+- Python 3.10 or later
 - MySQL
 - mysql-connector-python
 - Spyder IDE
@@ -34,12 +44,24 @@ Student-Management-System/
 ├── database/
 │   └── schema.sql
 │
+├── demo/
+│   └── index.html
+│
 ├── src/
 │   ├── config.py
 │   ├── database.py
+│   ├── errors.py
+│   ├── input_validators.py
 │   ├── student.py
 │   ├── student_repository.py
 │   └── main.py
+│
+├── tests/
+│   └── test_*.py
+│
+├── .github/workflows/
+│   ├── python.yml
+│   └── deploy-demo.yml
 │
 ├── .gitignore
 ├── README.md
@@ -60,17 +82,19 @@ git clone https://github.com/TejashPrakash/student-management-system.git
 cd student-management-system
 ```
 
-3. Install the required packages
+3. Create a `.env` file locally using `.env.example` as a template with your MySQL credentials.
+
+4. Install the required packages
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Create the database
+5. Create the database
 
 - Run the SQL statements in `database/schema.sql` to create the required tables.
 
-5. Run the application
+6. Run the application
 
 ```bash
 python src/main.py
