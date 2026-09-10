@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive EduTrack Student Management System demo">
+  <title>EduTrack | Live Demo</title>
+  <style>
+    :root { color-scheme: light; --ink:#15223a; --muted:#61708a; --card:#ffffff; --bg:#eef4ff; --brand:#315fc9; --brand-dark:#22489e; --line:#dce5f5; --good:#157a4d; --danger:#b4233f; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:linear-gradient(130deg,#e9f1ff 0%,#f8fbff 45%,#e7f8f3 100%); min-height:100vh; }
+    header { padding:48px 24px 72px; background:radial-gradient(circle at top right,#5b86e5 0,transparent 36%),#14264b; color:#fff; }
+    .wrap { width:min(1100px,calc(100% - 32px)); margin:auto; }
+    .eyebrow { margin:0 0 10px; letter-spacing:.11em; font-size:.75rem; font-weight:700; text-transform:uppercase; color:#b9cffd; }
+    h1 { margin:0; font-size:clamp(2rem,5vw,3.6rem); letter-spacing:-.04em; }
+    header p { max-width:620px; margin:14px 0 0; color:#d9e5ff; font-size:1.05rem; line-height:1.6; }
+    main { margin-top:-42px; padding-bottom:48px; }
+    .grid { display:grid; gap:22px; grid-template-columns:330px 1fr; align-items:start; }
+    .card { background:var(--card); border:1px solid rgba(220,229,245,.9); border-radius:18px; box-shadow:0 15px 35px rgba(33,64,122,.1); padding:24px; }
+    h2 { margin:0 0 18px; font-size:1.15rem; }
+    label { display:block; margin:13px 0 6px; font-size:.83rem; color:var(--muted); font-weight:700; }
+    input { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:9px; color:var(--ink); font:inherit; }
+    input:focus { outline:3px solid #dbe7ff; border-color:var(--brand); }
+    button { margin-top:20px; width:100%; border:0; border-radius:9px; padding:12px 16px; cursor:pointer; background:var(--brand); color:#fff; font:inherit; font-weight:700; }
+    button:hover { background:var(--brand-dark); }
+    .toolbar { display:flex; gap:12px; justify-content:space-between; align-items:center; margin-bottom:18px; }
+    .toolbar input { max-width:300px; }
+    .count { color:var(--muted); font-size:.88rem; }
+    table { width:100%; border-collapse:collapse; text-align:left; }
+    th { color:var(--muted); font-size:.73rem; letter-spacing:.05em; text-transform:uppercase; }
+    td, th { padding:14px 10px; border-bottom:1px solid var(--line); }
+    td { font-size:.92rem; }
+    .student { font-weight:700; }
+    .sub { display:block; margin-top:3px; color:var(--muted); font-size:.78rem; }
+    .remove { margin:0; width:auto; padding:7px 10px; color:var(--danger); background:#fff1f3; font-size:.78rem; }
+    .remove:hover { background:#ffe1e6; }
+    .notice { display:none; margin:0 0 14px; padding:10px 12px; border-radius:8px; background:#e8f8f0; color:var(--good); font-size:.88rem; }
+    .notice.show { display:block; }
+    .empty { padding:32px; color:var(--muted); text-align:center; }
+    footer { text-align:center; padding:8px 24px 35px; color:var(--muted); font-size:.84rem; }
+    @media (max-width:760px) { header { padding-top:35px; } .grid { grid-template-columns:1fr; } .toolbar { align-items:stretch; flex-direction:column; } .toolbar input { max-width:none; } .card { padding:18px; } table thead { display:none; } table, tbody, tr, td { display:block; width:100%; } tr { position:relative; padding:10px 0; } td { padding:4px 8px; border:0; } td:last-child { position:absolute; right:0; top:8px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <p class="eyebrow">Interactive portfolio project</p>
+      <h1>EduTrack</h1>
+      <p>A simple student-management dashboard. Add, search, and remove student records directly in your browser.</p>
+    </div>
+  </header>
+  <main class="wrap">
+    <div class="grid">
+      <section class="card" aria-labelledby="add-title">
+        <h2 id="add-title">Add a student</h2>
+        <form id="student-form">
+          <label for="name">Full name</label><input id="name" name="name" required maxlength="80" placeholder="e.g. Aanya Sharma">
+          <label for="roll">Roll number</label><input id="roll" name="roll" required inputmode="numeric" pattern="[0-9]+" placeholder="e.g. 101">
+          <label for="grade">Class</label><input id="grade" name="grade" required maxlength="20" placeholder="e.g. 12 Science">
+          <label for="email">Email address</label><input id="email" name="email" required type="email" placeholder="student@example.com">
+          <button type="submit">Add student</button>
+        </form>
+      </section>
+      <section class="card" aria-labelledby="records-title">
+        <div class="toolbar"><div><h2 id="records-title">Student records</h2><span class="count" id="count"></span></div><input id="search" type="search" placeholder="Search students" aria-label="Search students"></div>
+        <p class="notice" id="notice" role="status"></p>
+        <table>
+          <thead><tr><th>Student</th><th>Roll no.</th><th>Class</th><th></th></tr></thead>
+          <tbody id="records"></tbody>
+        </table>
+        <p class="empty" id="empty">No students match your search.</p>
+      </section>
+    </div>
+  </main>
+  <footer>Demo data is saved only in this browser. It does not connect to the MySQL console application.</footer>
+  <script>
+    const storageKey = "edutrack-demo-students";
+    const seed = [
+      { id: 1, name: "Aanya Sharma", roll: "101", grade: "12 Science", email: "aanya@example.com" },
+      { id: 2, name: "Rohan Mehta", roll: "102", grade: "12 Commerce", email: "rohan@example.com" }
+    ];
+    let students = JSON.parse(localStorage.getItem(storageKey) || "null") || seed;
+    const form = document.querySelector("#student-form");
+    const records = document.querySelector("#records");
+    const search = document.querySelector("#search");
+    const count = document.querySelector("#count");
+    const empty = document.querySelector("#empty");
+    const notice = document.querySelector("#notice");
+
+    function save() { localStorage.setItem(storageKey, JSON.stringify(students)); }
+    function showNotice(message) { notice.textContent = message; notice.classList.add("show"); setTimeout(() => notice.classList.remove("show"), 3000); }
+    function render() {
+      const query = search.value.trim().toLowerCase();
+      const filtered = students.filter(student => Object.values(student).some(value => String(value).toLowerCase().includes(query)));
+      records.innerHTML = filtered.map(student => `<tr><td><span class="student">${escapeHtml(student.name)}</span><span class="sub">${escapeHtml(student.email)}</span></td><td>${escapeHtml(student.roll)}</td><td>${escapeHtml(student.grade)}</td><td><button class="remove" data-id="${student.id}" aria-label="Remove ${escapeHtml(student.name)}">Remove</button></td></tr>`).join("");
+      count.textContent = `${students.length} student${students.length === 1 ? "" : "s"} saved`;
+      empty.hidden = filtered.length > 0;
+    }
+    function escapeHtml(value) { const el = document.createElement("div"); el.textContent = value; return el.innerHTML; }
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      if (!/^\d+$/.test(data.roll) || Number(data.roll) < 1) { showNotice("Roll number must be a positive whole number."); return; }
+      if (students.some(student => student.roll === data.roll)) { showNotice("That roll number is already in use."); return; }
+      students.push({ id: Date.now(), ...data }); save(); form.reset(); render(); showNotice(`${data.name} was added successfully.`);
+    });
+    records.addEventListener("click", event => {
+      const button = event.target.closest(".remove"); if (!button) return;
+      students = students.filter(student => student.id !== Number(button.dataset.id)); save(); render(); showNotice("Student removed.");
+    });
+    search.addEventListener("input", render);
+    render();
+  </script>
+</body>
+</html>
