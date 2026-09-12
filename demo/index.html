@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Interactive EduTrack Student Management System demo — try the full console workflow in your browser">
+  <meta name="description" content="Interactive EduTrack Student Management System demo - try the full console workflow in your browser">
   <title>EduTrack | Live Demo</title>
   <style>
     :root {
       color-scheme: light;
-      --ink:#15223a; --muted:#5c6b85; --card:#ffffff; --bg:#eef4ff;
+      --ink:#15223a; --muted:#5c6b85; --card:#ffffff;
       --brand:#315fc9; --brand-dark:#22489e; --line:#dce5f5;
       --good:#157a4d; --bad:#b4233f; --term:#0d1526; --term-ink:#d8e4ff;
       --prompt:#7ef0b0; --err:#ff8fa3; --key:#ffd479; --dim:#8fa3c8;
@@ -24,15 +24,13 @@
     .wrap { width:min(1180px,calc(100% - 32px)); margin:auto; }
     .eyebrow { margin:0 0 10px; letter-spacing:.11em; font-size:.75rem; font-weight:700; text-transform:uppercase; color:#b9cffd; }
     h1 { margin:0; font-size:clamp(2rem,5vw,3.4rem); letter-spacing:-.04em; }
-    header p { max-width:640px; margin:14px 0 0; color:#d9e5ff; font-size:1.02rem; line-height:1.6; }
+    header p { max-width:660px; margin:14px 0 0; color:#d9e5ff; font-size:1.02rem; line-height:1.6; }
     main { margin-top:-44px; padding-bottom:56px; }
     .grid { display:grid; gap:20px; grid-template-columns:minmax(0,7fr) minmax(0,5fr); align-items:start; }
     .card { background:var(--card); border:1px solid rgba(220,229,245,.9); border-radius:18px; box-shadow:0 15px 35px rgba(33,64,122,.1); padding:22px; }
     h2 { margin:0 0 6px; font-size:1.12rem; }
     .sub { margin:0 0 16px; color:var(--muted); font-size:.86rem; line-height:1.5; }
-    .chips { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px; }
-    .chip { font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:6px 11px; border-radius:999px; background:#eef3ff; color:var(--brand-dark); }
-    .chip.sql { background:#e8f8f0; color:var(--good); }
+    code { background:#eef3ff; border-radius:5px; padding:1px 5px; font-size:.85em; }
 
     /* terminal */
     .terminal {
@@ -46,8 +44,8 @@
     .dot { width:10px; height:10px; border-radius:50%; }
     .dot.r { background:#ff5f57; } .dot.y { background:#febc2e; } .dot.g { background:#28c840; }
     .term-title { margin-left:8px; font-size:.72rem; letter-spacing:.06em; color:var(--dim); text-transform:uppercase; }
-    .term-body { padding:14px 16px; height:430px; overflow-y:auto; white-space:pre-wrap; word-break:break-word; }
-    .term-body .cmd { color:#fff; }
+    .term-body { padding:14px 16px; height:440px; overflow-y:auto; white-space:pre-wrap; word-break:break-word; }
+    .term-body .cmd { color:#ffffff; }
     .term-body .out { color:var(--term-ink); }
     .term-body .ok { color:var(--prompt); }
     .term-body .warn { color:var(--key); }
@@ -55,29 +53,23 @@
     .term-body .dim { color:var(--dim); }
     .term-input-row { display:flex; gap:8px; align-items:center; padding:12px 16px; border-top:1px solid rgba(255,255,255,.08); background:#0b1222; }
     .term-input-row .prefix { color:var(--prompt); white-space:nowrap; }
-    .term-input-row input {
-      flex:1; background:transparent; border:0; outline:0; color:#fff;
-      font:inherit; padding:2px 0;
-    }
+    .term-input-row input { flex:1; background:transparent; border:0; outline:0; color:#fff; font:inherit; padding:2px 0; }
     .term-input-row input::placeholder { color:#54648a; }
-    .term-hint { padding:8px 16px 12px; font-size:.72rem; color:var(--dim); font-family:Inter, ui-sans-serif, system-ui, sans-serif; }
-    .term-hint button { background:#1a2745; color:#cfdcff; border:1px solid #2a3a63; border-radius:999px; padding:4px 10px; font-size:.72rem; cursor:pointer; margin:2px 4px 2px 0; }
+    .term-hint { padding:8px 16px 12px; font-size:.74rem; color:var(--dim); font-family:Inter, ui-sans-serif, system-ui, sans-serif; }
+    .term-hint button { background:#1a2745; color:#cfdcff; border:1px solid #2a3a63; border-radius:999px; padding:4px 11px; font-size:.73rem; cursor:pointer; margin:2px 4px 2px 0; }
     .term-hint button:hover { background:#233257; }
 
-    /* side cards */
+    /* right column */
     .stack { display:grid; gap:20px; }
     .steps { list-style:none; margin:0; padding:0; }
     .steps li { display:flex; gap:10px; padding:9px 0; border-bottom:1px dashed var(--line); font-size:.88rem; }
     .steps li:last-child { border-bottom:0; }
-    .steps .num {
-      flex:none; width:22px; height:22px; border-radius:50%; background:#eef3ff; color:var(--brand-dark);
-      display:grid; place-items:center; font-size:.72rem; font-weight:800;
-    }
+    .steps .num { flex:none; width:22px; height:22px; border-radius:50%; background:#eef3ff; color:var(--brand-dark); display:grid; place-items:center; font-size:.72rem; font-weight:800; }
     .steps b { font-weight:700; }
-    .steps span.desc { color:var(--muted); display:block; margin-top:2px; font-size:.8rem; }
-    .sql-box { background:var(--term); color:#c9e6d8; border-radius:10px; padding:14px 16px; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.78rem; line-height:1.6; overflow-x:auto; white-space:pre; }
+    .steps .desc { color:var(--muted); display:block; margin-top:2px; font-size:.8rem; line-height:1.45; }
+    .sql-box { background:var(--term); color:#c9e6d8; border-radius:10px; padding:14px 16px; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.76rem; line-height:1.6; overflow-x:auto; white-space:pre; }
     .sql-box .kw { color:#7ef0b0; } .sql-box .tbl { color:#ffd479; } .sql-box .cm { color:#8fa3c8; }
-    .note { margin:14px 0 0; font-size:.78rem; color:var(--muted); line-height:1.5; }
+    .note { margin:14px 0 0; font-size:.78rem; color:var(--muted); line-height:1.55; }
     a { color:var(--brand); }
     footer { text-align:center; padding:0 24px 34px; color:var(--muted); font-size:.82rem; }
     @media (max-width:880px) { .grid { grid-template-columns:1fr; } .term-body { height:360px; } }
@@ -87,9 +79,10 @@
   <header>
     <div class="wrap">
       <p class="eyebrow">Interactive portfolio project</p>
-      <h1>EduTrack — Student Management System</h1>
-      <p>A live, in-browser simulation of the EduTrack console application. Type menu choices like the real
-        Python + MySQL program, watch the workflow execute step by step, and see the exact SQL each action runs.</p>
+      <h1>EduTrack - Student Management System</h1>
+      <p>A live, in-browser simulation of the EduTrack console application. Drive the same menu, prompts and
+        validation as the real Python + MySQL program, watch each workflow execute step by step, and see the
+        exact SQL every action runs.</p>
     </div>
   </header>
 
@@ -98,22 +91,25 @@
       <!-- LEFT: interactive terminal -->
       <section class="card" aria-labelledby="demo-title">
         <h2 id="demo-title">Try the console workflow</h2>
-        <p class="sub">This terminal reproduces the menu, prompts, validation and messages from
-          <code>src/main.py</code>. Nothing is stored on any server — records live in this browser tab only.</p>
+        <p class="sub">This terminal reproduces the menu, prompts and validation messages from
+          <code>src/main.py</code>. Nothing is stored on any server, records live in this browser tab only.</p>
 
         <div class="terminal" role="group" aria-label="EduTrack console simulation">
-          <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="term-title">edutrack — python src/main.py</span></div>
+          <div class="term-bar">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="term-title">edutrack - python src/main.py</span>
+          </div>
           <div class="term-body" id="term"></div>
           <div class="term-input-row">
-            <span class="prefix" id="prompt-label">›</span>
-            <input id="term-in" autocomplete="off" spellcheck="false" aria-label="Console input" placeholder="Type a menu choice (1-7) and press Enter">
+            <span class="prefix" id="prompt-label">Enter your choice: </span>
+            <input id="term-in" autocomplete="off" spellcheck="false" aria-label="Console input"
+                   placeholder="Type a menu choice (1-7) and press Enter">
           </div>
           <div class="term-hint">Quick actions:
-            <button type="button" data-run="1">Add student</button>
-            <button type="button" data-run="4">View all</button>
-            <button type="button" data-run="2">Search by roll no</button>
-            <button type="button" data-run="6">Delete</button>
-          </hint>
+            <button type="button" data-run="1" data-fill="[]">Add sample student</button>
+            <button type="button" data-run="4">View all students</button>
+            <button type="button" data-run="2" data-fill='["101"]'>Search roll 101</button>
+            <button type="button" data-run="6" data-fill='["1"]'>Delete flow (safe)</button>
           </div>
         </div>
       </section>
@@ -124,20 +120,21 @@
           <h2 id="flow-title">What the workflow demonstrates</h2>
           <p class="sub">Each menu action runs the same logic as the real application.</p>
           <ol class="steps">
-            <li><span class="num">1</span><div><b>Add Student</b><span class="desc">Collects 12 validated fields — name, gender, DOB, class, section, roll no, email, phone, address, admission date — then runs an <code>INSERT</code>.</span></div></li>
-            <li><span class="num">2</span><div><b>Search by Roll Number</b><span class="desc">Finds one record with a <code>SELECT ... WHERE roll_no = %s</code> and prints the profile card.</span></div></li>
-            <li><span class="num">3</span><div><b>Search by Student ID</b><span class="desc">Primary-key lookup — the same profile view, keyed on the auto-increment ID.</span></div></li>
+            <li><span class="num">1</span><div><b>Add Student</b><span class="desc">Collects 11 validated fields (name, gender, DOB, class, section, roll no, email, phone, address, admission date), then runs an <code>INSERT</code>.</span></div></li>
+            <li><span class="num">2</span><div><b>Search by Roll Number</b><span class="desc">Finds one record with <code>SELECT ... WHERE roll_no = %s</code> and prints the profile card.</span></div></li>
+            <li><span class="num">3</span><div><b>Search by Student ID</b><span class="desc">Primary-key lookup, same profile view, keyed on the auto-increment ID.</span></div></li>
             <li><span class="num">4</span><div><b>View All Students</b><span class="desc">Lists every row as a profile card.</span></div></li>
-            <li><span class="num">5</span><div><b>Update Student</b><span class="desc">Shows current details, re-collects all fields, then runs an <code>UPDATE</code>.</span></div flow></div></li>
+            <li><span class="num">5</span><div><b>Update Student</b><span class="desc">Shows current details, re-collects all fields, then runs an <code>UPDATE</code>.</span></div></li>
             <li><span class="num">6</span><div><b>Delete Student</b><span class="desc">Shows the record, asks for a Y/N confirmation, then runs a <code>DELETE</code>.</span></div></li>
-            <li><span class="num">7</span><div><b>Exit</b><span class="desc">Closes the console gracefully; the demo restarts it.</span></div></li>
+            <li><span class="num">7</span><div><b>Exit</b><span class="desc">Closes the console gracefully; the demo simply restarts it.</span></div></li>
           </ol>
         </section>
 
         <section class="card" aria-labelledby="sql-title">
           <h2 id="sql-title">Behind the scenes</h2>
-          <p class="sub">The real app (Python + <code>mysql-connector-python</code>) runs these prepared statements against MySQL using a repository layer:</p>
-          <div class="sql-box"><span class="cm">-- schema.sql → students table</span>
+          <p class="sub">The real app (Python + <code>mysql-connector-python</code>) runs these prepared statements
+            against MySQL through a repository layer:</p>
+          <div class="sql-box"><span class="cm">-- database/schema.sql → students table</span>
 <span class="kw">INSERT</span> INTO <span class="tbl">students</span> (first_name, last_name, gender, dob,
   `class`, section, roll_no, email, phone, address, admission_date)
 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
@@ -146,47 +143,50 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 <span class="kw">SELECT</span> * FROM <span class="tbl">students</span> <span class="kw">WHERE</span> student_id = %s;
 <span class="kw">SELECT</span> * FROM <span class="tbl">students</span>;
 
-<span class="kw">UPDATE</span> <span class="tbl">students</span> SET first_name=%s, ..., admission_date=%s
+<span class="kw">UPDATE</span> <span class="tbl">students</span> SET first_name = %s, ..., admission_date = %s
 <span class="kw">WHERE</span> student_id = %s;
 
-<span class="kw">DELETE</span> FROM <span class="tbl">students</span> <span class="kw">WHERE</span> real_student_id = %s;</div>
-          <p class="note">The demo stores records in <code>localStorage</code> so you can refresh and keep your data.
-            Reset anytime by typing <b>reset</b> at the prompt. Validation rules (positive integers, email/phone
-            patterns, gender choices, YYYY-MM-DD dates, unique roll numbers) match <code>input_validators.py</code>.</p>
+<span class="kw">DELETE</span> FROM <span class="tbl">students</span> <span class="kw">WHERE</span> student_id = %s;</div>
+          <p class="note">Records are saved in <code>localStorage</code>, so they survive a page refresh. Type
+            <b>reset</b> at the prompt to restore the sample data. Validation rules (positive integers, email and
+            phone patterns, gender choices, YYYY-MM-DD dates, unique roll numbers) mirror
+            <code>input_validators.py</code>, and constraint violations are reported the way the real app reports
+            database errors.</p>
         </section>
       </div>
     </div>
   </main>
 
-  <footer>EduTrack — Python + MySQL console application · Interactive demo by Tejash Prakash ·
+  <footer>EduTrack - Python + MySQL console application | Interactive demo by Tejash Prakash |
     <a href="https://github.com/TejashPrakash/student-management-system">View source on GitHub</a></footer>
 
   <script>
     (() => {
       "use strict";
 
-      // ------------------------------------------------------------------
-      // In-browser "database" — mirrors the students table in schema.sql
-      // ------------------------------------------------------------------
+      // In-browser "database" - mirrors the students table in schema.sql
       const STORAGE_KEY = "edutrack-demo-students-v2";
       const SEED = [
-        { student_id: 1, first_name: "Aanya",  last_name: "Sharma",  gender: "Female", dob: "2008-03-14", class_name: "12",       section: "A", roll_no: 101, email: "aanya.sharma@example.com",  phone: "+91 98100 11111", address: "12 MG Road, New Delhi",       admission_date: "2022-04-01" },
-        { student_id: 2, first_name: "Rohan",  last_name: "Mehta",   gender: "Male",   dob: "2007-11-02", class_name: "11",       section: "B", roll_no: 102, email: "rohan.mehta@example.com",   phone: "+91 98100 22222", address: "44 Park Street, Kolkata",     admission_date: "2021-04-01" },
-        { student_id: 3, first_name: "Zoya",   last_name: "Khan",    gender: "Female", dob: "2009-06-21", class_name: "10",       section: "C", roll_no: 103, email: "zoya.khan@example.com",     phone: "+91 98100 33333", address: "7 MG Road, Bengaluru",        admission_date: "2023-04-01" },
-        { student_id: 4, first_name: "Vikram", last_name: "Rao",     gender: "Male",   dob: "2008-01-30", class_name: "12",       section: "A", roll_no: 104, email: "vikram.rao@example.com",    phone: "+91 98100 44444", address: "9 Hill Road, Mumbai",         admission_date: "2022-04-01" }
+        { student_id: 1, first_name: "Aanya",  last_name: "Sharma", gender: "Female", dob: "2008-03-14", class_name: "12", section: "A", roll_no: 101, email: "aanya.sharma@example.com", phone: "+91 98100 11111", address: "12 MG Road, New Delhi",    admission_date: "2022-04-01" },
+        { student_id: 2, first_name: "Rohan",  last_name: "Mehta",  gender: "Male",   dob: "2007-11-02", class_name: "11", section: "B", roll_no: 102, email: "rohan.mehta@example.com",  phone: "+91 98100 22222", address: "44 Park Street, Kolkata",  admission_date: "2021-04-01" },
+        { student_id: 3, first_name: "Zoya",   last_name: "Khan",   gender: "Female", dob: "2009-06-21", class_name: "10", section: "C", roll_no: 103, email: "zoya.khan@example.com",    phone: "+91 98100 33333", address: "7 Church Street, Mumbai",  admission_date: "2023-04-01" },
+        { student_id: 4, first_name: "Vikram", last_name: "Rao",    gender: "Male",   dob: "2008-01-30", class_name: "12", section: "A", roll_no: 104, email: "vikram.rao@example.com",   phone: "+91 98100 44444", address: "9 Hill Road, Bengaluru",   admission_date: "2022-04-01" }
       ];
 
       const GENDERS = ["Male", "Female", "Other"];
-      const EMAIL_RE = /^[^@\s]+@[^@\s.]+(\.[^@\s.]+)+$/;   // matches EMAIL_PATTERN in input_validators.py
-      const PHONE_RE = /^\+?[0-9][0-9 \-]{5,19}$/;          // matches PHONE_PATTERN in input_validators.py
+      const EMAIL_RE = /^[^@\s]+@[^@\s.]+(\.[^@\s.]+)+$/;   // same as EMAIL_PATTERN in input_validators.py
+      const PHONE_RE = /^\+?[0-9][0-9 \-]{5,19}$/;          // same as PHONE_PATTERN in input_validators.py
 
       const store = {
         load() {
           try {
             const raw = localStorage.getItem(STORAGE_KEY);
-            if (raw) { const rows = JSON.parse(raw); if (Array.isArray(rows)) return rows; }
+            if (raw) {
+              const rows = JSON.parse(raw);
+              if (Array.isArray(rows)) return rows;
+            }
           } catch (_) { /* corrupted storage → reseed */ }
-          return SEED.map(row => ({ ...row }));
+          return SEED.map(row => Object.assign({}, row));
         },
         save(rows) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(rows)); } catch (_) { /* private mode */ } },
         clear() { try { localStorage.removeItem(STORAGE_KEY); } catch (_) { /* ignore */ } }
@@ -194,14 +194,13 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 
       let students = store.load();
 
-      // ------------------------------------------------------------------
+      function nextId() { return students.reduce((max, s) => Math.max(max, s.student_id || 0), 0) + 1; }
+      function nextRollNo() { return students.reduce((max, s) => Math.max(max, s.roll_no || 0), 100) + 1; }
+
       // Terminal rendering
-      // ------------------------------------------------------------------
-      const term  = document.getElementById("term");
+      const term = document.getElementById("term");
       const input = document.getElementById("term-in");
       const promptLabel = document.getElementById("prompt-label");
-      let promptText = "Enter your choice: ";
-      let busy = false;
       let scrollQueued = false;
 
       function esc(value) {
@@ -210,10 +209,10 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         return el.innerHTML;
       }
 
-      function print(line, cls = "out") {
+      function print(html, cls) {
         const div = document.createElement("div");
-        div.className = cls;
-        div.innerHTML = line;
+        div.className = cls || "out";
+        div.innerHTML = html;
         term.appendChild(div);
         scheduleScroll();
       }
@@ -224,302 +223,350 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         requestAnimationFrame(() => {
           scrollQueued = false;
           term.scrollTop = term.scrollHeight;
- stick          });
-      }
-
-      function echo(value) {
-        print(`<span class="cmd">${esc(value)}</span>`);
-      }
-
-      function banner() {
-        print('<span class="ok">========================================</span>');
-        print('<span class="ok">                EDUTRACK                </span>');
-        print('<span class="ok">        Student Management System       </span>');
-        print('<span class="ok">========================================</span>');
-        print('<span class="out">1.  Add Student</span>');
-        print('<span class="out">2.  Search Student by Roll Number</span>');
-        print('<span class="out">3.  Search Student by Student ID</span>');
-        print('<span class="out">4.  View All Students</span>');
-        print('<span class="out">5.  Update Student</span>');
-        print('<span class="out">6.  Delete Student</span>');
-        print('<span class="ok">7.  Exit</span>');
-        print('<span class="ok">========================================</span>');
-        print('<span class="dim">Tip: type a number 1-7, or "reset" to restore the sample data.</span>', "out");
-      }
-
-      // ------------------------------------------------------------------
-      // Prompts — one question at a time, like the console app
-      // ------------------------------------------------------------------
-      let askQueue = [];
-      let currentAsk = null;
-
-      function ask(question, validate) {
-        return new Promise(resolve => {
-          askQueue.push({ question, validate, resolve });
-          if (!currentAsk) next();
         });
       }
 
-      function next() {
-        currentAsk = askQueue.shift();
-        if (!currentAsk) { busy = false; return; }
-        busy = true;
-        promptText = currentAsk.question;
-        promptLabel.textContent = currentAsk.question;
-        input.placeholder = currentAsk.example || "";
+      function echo(raw) { print(esc(raw), "cmd"); }
+
+      function sqlNote(text) { print("[SQL] " + esc(text), "dim"); }
+
+      function showBanner() {
+        print("");
+        print("========================================", "ok");
+        print("                EDUTRACK                ", "ok");
+        print("        Student Management System       ", "ok");
+        print("========================================", "ok");
+        print("1.  Add Student");
+        print("2.  Search Student by Roll Number");
+        print("3.  Search Student by Student ID");
+        print("4.  View All Students");
+        print("5.  Update Student");
+        print("6.  Delete Student");
+        print("7.  Exit", "ok");
+        print("========================================", "ok");
+        print('Type a number 1-7 and press Enter. Type "reset" to restore sample data.', "dim");
+        setPrompt("Enter your choice: ");
+      }
+
+      function setPrompt(text) {
+        promptLabel.textContent = text;
+        input.placeholder = "";
         input.focus({ preventScroll: true });
       }
 
-      async function finishAsk(raw) {
-        const task = currentAsk;
-        currentAsk = null;
-        echo(raw);
-        const result = await task.validate(raw);
-        if (result === null) { print("retry"); next(); return; }
-        next();
-        task.resolve(result);
+      function profileCard(student) {
+        print("========================================", "ok");
+        print("STUDENT PROFILE : " + esc(student.first_name + " " + student.last_name), "ok");
+        print("========================================", "ok");
+        print("Student ID      : " + esc(student.student_id));
+        print("Roll No         : " + esc(student.roll_no));
+        print("Gender          : " + esc(student.gender));
+        print("Date of Birth   : " + esc(student.dob));
+        print("Class & Section : " + esc(student.class_name) + " - " + esc(student.section));
+        print("Email           : " + esc(student.email));
+        print("Phone           : " + esc(student.phone));
+        print("Address         : " + esc(student.address));
+        print("Admission Date  : " + esc(student.admission_date));
+        print("========================================", "ok");
       }
 
-      async function finishAskWithFeedback(raw, feedback) {
-        const task = currentAsk;
-        currentAsk = null;
-        echo(raw);
-        if (feedback) print(feedback, "warn");
-        next();
-        task.resolve(null); // signals retry
+      // Validators - same rules and messages as input_validators.py
+      function todayIso() {
+        const now = new Date();
+        return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())).toISOString().slice(0, 10);
       }
 
-      // ------------------------------------------------------------------
-      // Validators — same messages as input_validators.py
-      // ------------------------------------------------------------------
-      const v = {
-        positiveInt: () => ask("Enter a positive whole number: ", async raw => {
-          const n = Number.parseInt(raw.trim(), 10);
-          if (!Number.isInteger(n) || n <= 0) { await finishAskWithFeedback(raw, "Please enter a positive whole number."); return null; }
-          return n;
-        }),
-        text: (label, max) => ask(`Enter ${label}: `, async raw => {
-          const value = raw.trim();
-          if (value.length < 1) { await finishAskWithFeedback(raw, "This field is required."); return null; }
-          if (value.length > max) { await finishAskWithFeedback(raw, `Please use at most ${max} characters.`); return null; }
-          return value;
-        }),
-        choice: () => ask("Enter Gender (Male/Female/Other): ", async raw => {
-          const value = raw.trim().toLowerCase();
-          const match = GENDERS.find(g => g.toLowerCase() === value);
-          if (!match) { await finishAskWithFeedback(raw, "Please enter one of: Male, Female, Other."); return null; }
-          return match;
-        }),
-        date: (label, allowFuture) => ask(`Enter ${label} (YYYY-MM-DD): `, async raw => {
-          const value = raw.trim();
-          if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) { await finishAskWithFeedback(raw, "Please enter a date in YYYY-MM-DD format."); return null; }
-          const parsed = new Date(value + "T00:00:00");
-          if (Number.isNaN(parsed.getTime())) { await finishAskWithFeedback(raw, "Please enter a date in YYYY-MM-DD format."); return null; }
-          const iso = parsed.toISOString().slice(0, 10);
-          if (!allowFuture && iso > new Date().toISOString().slice(0, 10)) { await finishAskWithFeedback(raw, "The date cannot be in the future."); return null; }
-          return iso;
-        }),
-        email: () => ask("Enter Email: ", async raw => {
-          const value = raw.trim();
-          if (value.length > 255 || !EMAIL_RE.test(value)) { await fieldFeedback(raw, "Please enter a valid email address."); return null; }
-          return value;
-        }),
-        phone: () => ask("Enter Phone Number: ", async raw => {
-          const value = raw.trim();
-          if (value.length > 20 || !PHONE_RE.test(value)) { await fieldFeedback(raw, " Please enter a valid phone number (digits, spaces and dashes only)."); return null; }
-          return value;
-        })
+      const validators = {
+        positiveInt(raw) {
+          const value = Number(raw);
+          if (!Number.isInteger(value) || value <= 0) return "Please enter a positive whole number.";
+          return null;
+        },
+        text(raw, max) {
+          if (raw.length < 1) return "This field is required.";
+          if (raw.length > max) return "Please use at most " + max + " characters.";
+          return null;
+        },
+        gender(raw) {
+          if (!GENDERS.some(g => g.toLowerCase() === raw.toLowerCase())) {
+            return "Please enter one of: Male, Female, Other.";
+          }
+          return null;
+        },
+        date(raw, allowFuture) {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return "Please enter a date in YYYY-MM-DD format.";
+          const parts = raw.split("-").map(Number);
+          const parsed = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+          if (isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== raw) {
+            return "Please enter a date in YYYY-MM-DD format.";
+          }
+          if (!allowFuture && raw > todayIso()) return "The date cannot be in the future.";
+          return null;
+        },
+        email(raw) {
+          if (raw.length > 255 || !EMAIL_RE.test(raw)) return "Please enter a valid email address.";
+          return null;
+        },
+        phone(raw) {
+          if (raw.length > 20 || !PHONE_RE.test(raw)) {
+            return "Please enter a valid phone number (digits, spaces and dashes only).";
+          }
+          return null;
+        },
+        yesNo(raw) {
+          const up = raw.toUpperCase();
+          if (up !== "Y" && up !== "N") return "Please answer Y or N.";
+          return null;
+        }
       };
 
-      // ------------------------------------------------------------------
-      // Menu actions — mirror handle_choice() in main.py
-      // ------------------------------------------------------------------
-      async function promptStudent(studentId) {
-        const first_name = await v.text("First Name", 50);
-        const last_name = await v.text("Last Name", 50);
-        const gender = await v.choice();
-        const dob = await v.date("Date of Birth", false);
-        const class_name = await v.text("Class", 10);
-        const section = await v.text("Section", 1);
-        const roll_no = await v.positiveInt();
-        const email = await v.email();
-        const phone = await v.phone();
-        const address = await v.text("Address", 500);
-        const admission_date = await v.date("Admission Date", true);
-        return { studentId, first_name, last_name, gender, dob, class_name, section, roll_no, email, phone, address, admission_date };
+      // Field flow engine - asks one prompt at a time, like the console app
+      const app = { mode: "menu", fields: [], index: 0, values: {}, onDone: null };
+
+      function makeField(key, prompt, validate, fallback) {
+        return { key: key, prompt: prompt, validate: validate, fallback: fallback };
       }
 
-      function profileCard(student) {
-        print('<span class="ok">========================================</span>');
-        print(`<span class="ok">STUDENT PROFILE : ${esc(student.first_name)} ${esc(student.last_name)}</span>`);
-        print('<span class="ok">========================================</span>');
-        print(`Student ID      : ${esc(student.student_id ?? "None")}`);
-        print(`Roll No         : ${esc(student.roll_no)}`);
-        print(`Gender          : ${esc(student.gender)}`);
-        print(`Date of Birth   : ${esc(student.dob)}`);
-        print(`Class & Section : ${esc(student.class_name)} - ${esc(student.section)}`);
-        print(`Email           : ${esc(student.email)}`);
-        print(`Phone           : ${esc(student.phone)}`);
-        print(`Address         : ${esc(student.address)}`);
-        print(`Admission Date  : ${esc(student.admission_date)}`);
-        print('<span class="ok">========================================</span>');
+      function studentFields() {
+        const rollFallback = nextRollNo();
+        const idFallback = nextId();
+        return [
+          makeField("first_name", "Enter First Name: ", r => validators.text(r, 50), () => "Demo"),
+          makeField("last_name", "Enter Last Name: ", r => validators.text(r, 50), () => "Student"),
+          makeField("gender", "Enter Gender (Male/Female/Other): ", r => validators.gender(r), () => "Male"),
+          makeField("dob", "Enter Date of Birth (YYYY-MM-DD): ", r => validators.date(r, false), () => "2008-01-15"),
+          makeField("class_name", "Enter Class: ", r => validators.text(r, 10), () => "12"),
+          makeField("section", "Enter Section: ", r => validators.text(r, 1), () => "A"),
+          makeField("roll_no", "Enter Roll Number: ", r => validators.positiveInt(r), () => rollFallback),
+          makeField("email", "Enter Email: ", r => validators.email(r), () => "demo.student" + idFallback + "@example.com"),
+          makeField("phone", "Enter Phone Number: ", r => validators.phone(r), () => "+91 98100 55555"),
+          makeField("address", "Enter Address: ", r => validators.text(r, 500), () => "1 Demo Street, New Delhi"),
+          makeField("admission_date", "Enter Admission Date (YYYY-MM-DD): ", r => validators.date(r, true), () => "2024-04-01")
+        ];
       }
 
-      function sqlNote(text) {
-        print(`<span class="dim">[SQL] ${esc(text)}</span>`);
+      const idField = () => makeField("student_id", "Enter Student ID: ", r => validators.positiveInt(r), () => "1");
+      const rollField = () => makeField("roll_no", "Enter Roll Number: ", r => validators.positiveInt(r), () => "101");
+      const confirmField = () => makeField("confirm", "Are you sure you want to delete this student? (Y/N): ", r => validators.yesNo(r), () => "N");
+
+      function startFlow(fields, onDone) {
+        app.mode = "field";
+        app.fields = fields;
+        app.index = 0;
+        app.values = {};
+        app.onDone = onDone;
+        askCurrent();
       }
 
-      function saveStore() { store.save(students); }
+      function cancelFlow(reason) {
+        if (app.mode !== "field") return;
+        app.mode = "menu";
+        app.fields = [];
+        app.index = 0;
+        app.values = {};
+        app.onDone = null;
+        if (reason) print(reason, "warn");
+      }
 
-      function nextId() { return students.reduce((max, s) => Math.max(max, s.student_id), 0) + 1; }
+      function askCurrent() {
+        const field = app.fields[app.index];
+        if (!field) { finishFlow(); return; }
+        setPrompt(field.prompt);
+      }
 
-      async function actionAdd() {
-        print("You have selected to add a student...");
-        const s = await promptStudent(null);
-        if (students.some(x => x.roll_no === s.roll_no)) {
-          print("A student with that roll number already exists.", "warn");
-          print("Student was not added.", "bad");
-          sqlNote("ROLLBACK — duplicate roll_no violates UNIQUE constraint");
+      function feed(raw) {
+        const field = app.fields[app.index];
+        const value = String(raw == null ? "" : raw).trim();
+        const error = field.validate(value);
+        if (error) { print(error, "warn"); return; }
+        app.values[field.key] = field.key === "student_id" || field.key === "roll_no" ? Number(value) : value;
+        app.index += 1;
+        askCurrent();
+      }
+
+      function finishFlow() {
+        app.mode = "menu";
+        const done = app.onDone;
+        app.onDone = null;
+        done(app.values);
+      }
+
+      function autofill(values) {
+        if (app.mode !== "field") return;
+        let fillIndex = 0;
+        while (app.mode === "field") {
+          const field = app.fields[app.index];
+          const raw = fillIndex < values.length ? String(values[fillIndex]) : String(field.fallback());
+          fillIndex += 1;
+          echo(raw);
+          const before = app.index;
+          feed(raw);
+          if (app.index === before) break; // fallback value was rejected (stop to avoid a loop)
+        }
+      }
+
+      // Menu actions - mirror handle_choice() in main.py
+      function actionAdd(values) {
+        if (students.some(s => s.roll_no === values.roll_no)) {
+          sqlNote("ROLLBACK: duplicate roll_no violates UNIQUE constraint");
+          print("ERROR: Duplicate entry for roll_no " + values.roll_no + " (UNIQUE constraint).", "bad");
+          showBanner();
           return;
         }
-        s.student_id = nextId();
-        students.push(s);
-        saveStore();
-        print("\nStudent added successfully!", "ok");
-        sqlNote(`INSERT INTO students (...) VALUES ('${s.first_name}', '${s.last_name}', ...)`);
-      }
-
-      async function actionSearchByRoll() {
-        print("You have selected to search a student by Roll Number");
-        const roll = await v.positiveInt();
-        sqlNote(`SELECT * FROM students WHERE roll_no = ${roll};`);
-        const found = students.filter(s => s.roll_no === roll);
-        if (found.length === 0) print("Student not found.", "bad");
-        else found.forEach(profileCard);
-      }
-
-      search by student ID, view all, update, delete
-      async function actionSearchById() {
-        print("You have selected to search a student by Student ID.");
-        const id = await v.positiveInt();
-        sqlNote(`SELECT * FROM students WHERE student_id = ${id};`);
-        const found = students.filter(s => s.student_id === id);
-        if (found.length === 0) print("Student not found.", "bad");
-        else found.forEach(profileCard);
-      }
-
-      async function actionViewAll() {
-        print("You have selected to View All Students.");
-        sqlNote("SELECT * FROM students;");
-        if (students.length === 0) { print("No student found.", "bad"); return; }
-        students.forEach(profileCard);
-      }
-
-      async function actionUpdate() {
-        print("You have selected to update a student.");
-        const id = await v.positiveInt();
-        sqlNote(`SELECT * FROM students WHERE student_id = ${id};`);
-        const found = students.find(s => s.student_id === id);
-        if (!found) { print("Student not found.", "bad"); return; }
-        print("\nCurrent Student Details:");
-        profileCard(found);
-        print("Enter the Updated Details: ");
-        const s = await promptStudent(found.student_id);
-        if (students.some(x => x.roll_no === s.roll_no && x.student_id !== id)) {
-          print("A student with that roll number uniqueness check failed.", "warn");
-          print("No student record was updated (ID might not exist).", "bad");
-          sqlNote("ROLLBACK — duplicate roll_no violates UNIQUE constraint");
-          return;
-        }
-        Object.assign(found, s, { student_id: id });
-        saveStore();
-        print("Student updated successfully.", "ok");
-        sqlNote(`UPDATE students SET first_name='${s.first_name}', ... WHERE student_id = ${id};`);
-      }
-
-      async function actionDelete() {
-        print("You have selected to delete the entry of a student.");
-        const id = await v.positiveInt();
-        sqlNote(`SELECT * FROM students WHERE student_id = ${id};`);
-        const found = students.find(s => s.line_no === id);
-        if (!found) { print("Student not found.", "bad"); return; }
-        print("\nCurrent Student Details:");
-        profileCard(found);
-        const answer = await ask("Are you sure you want to delete this student? (Y/N): ", async raw => {
-          const up = raw.trim().toUpperCase();
-          if (up !== "Y" && up !== "N") { await finishAskWithFeedback(raw, "Please answer Y or N."); return null; }
-          return up;
-        });
-        if (answer === "Y") {
-          students = students.filter(s => s.student_id !== id);
-          saveStore();
-          print("Student deleted successfully.", "ok");
-          sqlNote(`DELETE FROM students WHERE student_id = ${id};`);
-        } else {
-          print("Deletion cancelled.", "warn");
-        }
-      }
-
-      // ------------------------------------------------------------------
-      // Main loop
-      // ------------------------------------------------------------------
-      async function handleChoice(choice) {
-        switch (choice) {
-          case "1": await actionAdd(); break;
-          case "2": await actionSearchByRoll(); return true;
-          case "3": await actionSearchById(); return true;
-          case "4": await actionViewAll(); break;
-          case "5": await actionUpdate(); break;
-          case "6": await actionDelete(); break;
-          case "7": return false;
-          default: print("\nFeature coming soon...", "warn");
-        }
-        return true;
-      }
-
-      function showBanner() { banner(); promptText = "Enter your choice: "; promptLabel.textContent = promptText; }
-
-      async function submit(raw) {
-        if (currentAsk) {
-          finishAsk(raw);
-          return;
-        }
-        if (busy) return;
-        const choice = raw.trim();
-        if (!choice) return;
-        if (choice.toLowerCase() === "reset") {
-          store.clear();
-          students = SEED.map(r => ({ ...r }));
-          print("Sample data restored.", "ok");
-          return;
-        }
-        busy = true;
-        echo(choice);
-        const again = await handleChoice(choice);
-        if (!again) { print("\nThank you for using EduTrack!", "ok"); }
-        print('<span class="dim">— press Enter for the menu —</span>', "out");
+        const student = Object.assign({ student_id: nextId() }, values);
+        students.push(student);
+        store.save(students);
+        print("");
+        print("Student added successfully!", "ok");
+        sqlNote("INSERT INTO students (...) VALUES ('" + values.first_name + "', '" + values.last_name + "', ...);");
         showBanner();
       }
 
-      input.addEventListener("keydown", event => {
-        if (event.key === "Enter") {
-          const raw = input.value;
-          input.value =("");
-          submit(raw);
+      function actionSearchByRoll(values) {
+        sqlNote("SELECT * FROM students WHERE roll_no = " + values.roll_no + ";");
+        const found = students.filter(s => s.roll_no === values.roll_no);
+        if (found.length === 0) print("Student not found.", "bad");
+        else found.forEach(profileCard);
+        showBanner();
+      }
+
+      function actionSearchById(values) {
+        sqlNote("SELECT * FROM students WHERE student_id = " + values.student_id + ";");
+        const found = students.filter(s => s.student_id === values.student_id);
+        if (found.length === 0) print("Student not found.", "bad");
+        else found.forEach(profileCard);
+        showBanner();
+      }
+
+      function actionViewAll() {
+        sqlNote("SELECT * FROM students;");
+        if (students.length === 0) print("No student found.", "bad");
+        else students.forEach(profileCard);
+        showBanner();
+      }
+
+      function actionUpdate(id, values) {
+        const student = students.find(s => s.student_id === id);
+        if (!student) { print("Student not found.", "bad"); showBanner(); return; }
+        if (students.some(s => s.roll_no === values.roll_no && s.student_id !== id)) {
+          sqlNote("ROLLBACK: duplicate roll_no violates UNIQUE constraint");
+          print("ERROR: Duplicate entry for roll_no " + values.roll_no + " (UNIQUE constraint).", "bad");
+          showBanner();
+          return;
         }
+        Object.assign(student, values, { student_id: id });
+        store.save(students);
+        print("Student updated successfully.", "ok");
+        sqlNote("UPDATE students SET first_name = '" + values.first_name + "', ... WHERE student_id = " + id + ";");
+        showBanner();
+      }
+
+      function actionDelete(id, confirmed) {
+        if (confirmed === "Y") {
+          students = students.filter(s => s.student_id !== id);
+          store.save(students);
+          print("Student deleted successfully.", "ok");
+          sqlNote("DELETE FROM students WHERE student_id = " + id + ";");
+        } else {
+          print("Deletion cancelled.", "warn");
+        }
+        showBanner();
+      }
+
+      function handleChoice(choice) {
+        switch (choice) {
+          case "1":
+            print("You have selected to add a student...");
+            startFlow(studentFields(), values => actionAdd(values));
+            return;
+          case "2":
+            print("You have selected to search a student by Roll Number");
+            startFlow([rollField()], values => actionSearchByRoll(values));
+            return;
+          case "3":
+            print("You have selected to search a student by Student ID.");
+            startFlow([idField()], values => actionSearchById(values));
+            return;
+          case "4":
+            print("You have selected to View All Students.");
+            actionViewAll();
+            return;
+          case "5":
+            print("You have selected to update a student.");
+            startFlow([idField()], values => {
+              const id = values.student_id;
+              const student = students.find(s => s.student_id === id);
+              if (!student) { print("Student not found.", "bad"); showBanner(); return; }
+              print("");
+              print("Current Student Details:");
+              profileCard(student);
+              print("Enter the Updated Details: ");
+              startFlow(studentFields(), updated => actionUpdate(id, updated));
+            });
+            return;
+          case "6":
+            print("You have selected to delete the entry of a student.");
+            startFlow([idField()], values => {
+              const id = values.student_id;
+              const student = students.find(s => s.student_id === id);
+              if (!student) { print("Student not found.", "bad"); showBanner(); return; }
+              print("");
+              print("Current Student Details:");
+              profileCard(student);
+              startFlow([confirmField()], confirmValues => actionDelete(id, confirmValues.confirm));
+            });
+            return;
+          case "7":
+            print("");
+            print("Thank you for using EduTrack!", "ok");
+            print("(Restarting the demo console...)", "dim");
+            showBanner();
+            return;
+          default:
+            print("");
+            print("Feature coming soon...", "warn");
+            showBanner();
+        }
+      }
+
+      // Input plumbing
+      function submit(raw) {
+        const text = String(raw == null ? "" : raw);
+        if (text.trim().toLowerCase() === "reset") {
+          echo(text);
+          cancelFlow("Current input cancelled.");
+          store.clear();
+          students = SEED.map(row => Object.assign({}, row));
+          print("Sample data restored.", "ok");
+          showBanner();
+          return;
+        }
+        if (app.mode === "field") { echo(text); feed(text); return; }
+        const choice = text.trim();
+        if (!choice) return;
+        echo(choice);
+        handleChoice(choice);
+      }
+
+      input.addEventListener("keydown", event => {
+        if (event.key !== "Enter") return;
+        const raw = input.value;
+        input.value = "";
+        submit(raw);
       });
 
       document.querySelectorAll("[data-run]").forEach(button => {
         button.addEventListener("click", () => {
-          input.value = button.dataset.run;
+          cancelFlow("Current input cancelled. Returning to the menu.");
           submit(button.dataset.run);
+          if (button.dataset.fill) autofill(JSON.parse(button.dataset.fill));
+          input.focus({ preventScroll: true });
         });
       });
 
       // Boot
-      print('<span class="ok">Starting EduTrack console app...</span>', "ok");
-      print('<span class="dim">(Connected to in-browser MySQL simulation · schema.sql loaded)</span>');
-      print("");
+      print("Starting EduTrack console app...", "ok");
+      print("(Connected to in-browser MySQL simulation, database/schema.sql loaded)", "dim");
       showBanner();
       input.focus();
     })();
