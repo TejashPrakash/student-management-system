@@ -1,43 +1,63 @@
+<div align="center">
+
 # 🎓 EduTrack - Student Management System
 
-A console-based Student Management System built in Python using MySQL. This project demonstrates Object-Oriented Programming (OOP), database connectivity, and CRUD (Create, Read, Update, Delete) operations.
+**A console-based Student Management System in Python + MySQL, with a live in-browser demo.**
 
-## 📌 Features
+[![Python checks](https://github.com/TejashPrakash/student-management-system/actions/workflows/python.yml/badge.svg)](https://github.com/TejashPrakash/student-management-system/actions/workflows/python.yml)
+[![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://tejashprakash.github.io/student-management-system/demo/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 
-- ➕ Add Student
+</div>
+
+---
+
+EduTrack is a menu-driven application for managing student records. It demonstrates
+Object-Oriented Programming, real MySQL database connectivity, and CRUD (Create, Read,
+Update, Delete) operations through a clean, layered architecture:
+
+```
+main.py (menu)  →  student_repository.py (SQL)  →  MySQL (students table)
+                        ↑
+        input_validators.py guards every prompt
+```
+
+## 🌐 Try the Live Demo (no installation)
+
+**👉 [Open the interactive demo](https://tejashprakash.github.io/student-management-system/demo/)**
+
+The demo is a faithful simulation of the real console application, running entirely
+in your browser: the same 7-option menu, the same prompts and validation messages
+from `input_validators.py`, the same profile output as `Student.display_info()`,
+and a trace of the SQL each action runs against the `students` table.
+
+Records are saved in your browser only (`localStorage`); the console application
+itself uses MySQL.
+
+## ✨ Features
+
+- ➕ Add Student (11 validated fields)
 - 🔍 Search Student by Roll Number
 - 🔍 Search Student by Student ID
 - 📋 View All Students
 - ✏️ Update Student Information
-- 🗑️ Delete Student Records
+- 🗑️ Delete Student Records (with confirmation)
 - 💾 MySQL Database Integration
 - 🖥️ Interactive Console Menu
-- ⚠️ Error Handling and Database Transaction Support
-
-## 🌐 Live Demo
-
-**Try the app in your browser (no installation needed):**
-
-https://tejashprakash.github.io/student-management-system/
-
-The demo simulates the real application end to end: the same 7-option menu,
-the same prompts and validation messages from `input_validators.py`, profile
-views like `Student.display_info()`, and the SQL each action runs against the
-`students` table. Records are stored in the browser only (`localStorage`);
-the full console application continues to use MySQL.
-
----
+- ⚠️ Error Handling and Database Transaction Support (rollback on failure)
 
 ## 🛠️ Technologies Used
 
-- Python 3.10 or later
-- MySQL
-- mysql-connector-python
-- python-dotenv
-- Spyder IDE
-- Git & GitHub
-
----
+| Layer      | Technology                                    |
+|------------|-----------------------------------------------|
+| Language   | Python 3.10+                                   |
+| Database   | MySQL                                          |
+| Driver     | mysql-connector-python                         |
+| Config     | python-dotenv (environment variables)          |
+| Testing    | unittest (standard library)                    |
+| CI/CD      | GitHub Actions + GitHub Pages                  |
+| IDE        | Spyder                                         |
 
 ## 📂 Project Structure
 
@@ -45,7 +65,7 @@ the full console application continues to use MySQL.
 Student-Management-System/
 │
 ├── database/
-│   └── schema.sql            # MySQL schema for all tables
+│   └── schema.sql            # MySQL schema: creates database + all tables
 │
 ├── demo/
 │   └── index.html            # Interactive browser demo (GitHub Pages)
@@ -54,7 +74,7 @@ Student-Management-System/
 │   └── development-logs.md   # How the project was built, day by day
 │
 ├── src/
-│   ├── config.py             # Reads DB credentials from environment/.env
+│   ├── config.py             # Reads DB credentials from environment / .env
 │   ├── database.py           # Connection handling
 │   ├── errors.py             # Custom exception types
 │   ├── input_validators.py   # Reusable, testable prompt validation
@@ -63,7 +83,7 @@ Student-Management-System/
 │   └── main.py               # Console menu and workflow
 │
 ├── tests/
-│   └── test_*.py             # Unit tests for every module
+│   └── test_*.py             # Unit tests for every module (54 tests)
 │
 ├── .github/workflows/
 │   ├── python.yml            # CI: syntax check + unit tests
@@ -76,61 +96,59 @@ Student-Management-System/
 └── requirements.txt
 ```
 
----
+## ⚙️ Getting Started
 
-## ⚙️ Installation
-
-1. Clone the repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/TejashPrakash/student-management-system.git
-```
-
-2. Navigate to the project folder
-
-```bash
 cd student-management-system
 ```
 
-3. Configure the database connection (required)
-
-- Create a `.env` file locally using `.env.example` as a template, or set
-  these environment variables in your shell:
-  `EDUTRACK_DB_HOST`, `EDUTRACK_DB_USER`, `EDUTRACK_DB_PASSWORD`,
-  `EDUTRACK_DB_NAME`, `EDUTRACK_DB_PORT`
-- `EDUTRACK_DB_PASSWORD` is mandatory. The app refuses to start without it
-  unless you explicitly set `EDUTRACK_ALLOW_EMPTY_PASSWORD=1` for a
-  throwaway local database with no password.
-- Never commit `.env` or real credentials; prefer a dedicated
-  least-privilege MySQL user rather than `root`.
-
-4. Install the required packages
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-5. Create the database
+### 3. Configure the database connection
 
-- Run the SQL statements in `database/schema.sql` to create the `edutrack`
-  database and all tables, for example:
+Create a `.env` file in the project root (copy `.env.example`) and fill in your
+local MySQL credentials:
+
+```env
+EDUTRACK_DB_HOST=localhost
+EDUTRACK_DB_USER=root
+EDUTRACK_DB_PASSWORD=your_password_here
+EDUTRACK_DB_NAME=edutrack
+EDUTRACK_DB_PORT=3306
+```
+
+Notes:
+
+- `EDUTRACK_DB_PASSWORD` is required. The app refuses to start without it unless
+  you explicitly set `EDUTRACK_ALLOW_EMPTY_PASSWORD=1` (throwaway local databases only).
+- Never commit `.env` or real credentials. In production, prefer a dedicated
+  least-privilege MySQL user instead of `root`.
+
+### 4. Create the database
+
+Run the schema script (it creates the `edutrack` database and all tables):
 
 ```bash
 mysql -u root -p < database/schema.sql
 ```
 
-6. Run the application
+### 5. Run the application
 
 ```bash
 python src/main.py
 ```
 
----
-
 ## 🧪 Running the Tests
 
-The project ships with unit tests for every module (built with `unittest`,
-no extra test dependencies needed):
+The project ships with unit tests for every module (`unittest`, no extra test
+dependencies needed):
 
 ```bash
 python -m unittest discover -s tests -v
@@ -138,8 +156,6 @@ python -m unittest discover -s tests -v
 
 The same checks run automatically on every push via GitHub Actions
 (`.github/workflows/python.yml`).
-
----
 
 ## 📷 Application Menu
 
@@ -158,43 +174,39 @@ The same checks run automatically on every push via GitHub Actions
 ========================================
 ```
 
----
-
 ## 📖 Concepts Demonstrated
 
-- Object-Oriented Programming (OOP)
-- Classes and Objects
-- Functions and Modules
-- MySQL Database Connectivity
-- SQL CRUD Operations with Parameterized Queries
-- Exception Handling and Custom Exceptions
-- Repository Design Pattern
-- Dependency Injection for Testable Console Input
-- Environment-Based Configuration
+- Object-Oriented Programming (classes, objects, methods)
+- Repository Design Pattern (SQL isolated from menu logic)
+- Parameterized SQL queries (injection-safe CRUD)
+- Exception handling with a custom error hierarchy
+- Database transactions with rollback on failure
+- Dependency injection for testable console input
+- Environment-based configuration (.env, 12-factor style)
 - Continuous Integration with GitHub Actions
-
----
 
 ## 🚀 Future Improvements
 
-- Teacher Management
-- Attendance Management
-- Marks Management
-- Login System
-- Export Data to CSV/Excel
-- Graphical User Interface (GUI)
-- Web-based Version using Flask or Django
+- Teacher management
+- Attendance management
+- Marks management
+- Login system with roles
+- Export data to CSV/Excel
+- Graphical user interface (GUI)
+- Web-based version using Flask or Django
 
----
+## 📚 Documentation
+
+- [Development log](docs/development-logs.md) - how the project was built, decisions made along the way
+- [Database schema](database/schema.sql) - all tables with comments
 
 ## 👨‍💻 Author
 
 **Tejash Prakash**
 
-GitHub: https://github.com/TejashPrakash
-
----
+GitHub: [@TejashPrakash](https://github.com/TejashPrakash)
 
 ## 📄 License
 
-This project is developed for learning purposes and is open for educational use.
+This project is developed for learning purposes and is open for educational use
+under the [MIT License](LICENSE).
