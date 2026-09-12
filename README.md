@@ -68,8 +68,26 @@ Student-Management-System/
 └── requirements.txt
 ```
 
+<<<<<<< HEAD
 ## ⚙️ Installation
 
+=======
+---
+## Key changes in this polished version
+
+- Configuration now reads database credentials from environment variables. See `.env.example` for names.
+- `student_repository.py` uses dictionary cursors and more robust error handling.
+- Database and repository failures raise the exceptions in `src/errors.py` (`ConfigurationError`,
+    `DatabaseConnectionError`, `StudentRepositoryError`) instead of being turned into
+    `None`/`False`/`[]`, so a failed query is never reported as "no students found".
+    `main.py` catches them per menu action, logs the cause, and keeps the menu running.
+- Added guidance in Installation to avoid storing plaintext credentials in source.
+
+---
+
+## ⚙️ Installation (updated)
+
+>>>>>>> 1b0bf3bf1577513f72b70f33869b034694ff55b1
 1. Clone the repository
 
 ```bash
@@ -82,7 +100,18 @@ git clone https://github.com/TejashPrakash/student-management-system.git
 cd student-management-system
 ```
 
+<<<<<<< HEAD
 3. Create a `.env` file locally using `.env.example` as a template with your MySQL credentials.
+=======
+3. Configure environment variables (required)
+
+- Create a `.env` file locally using `.env.example` as a template, or set the following environment variables in your shell:
+    `EDUTRACK_DB_HOST`, `EDUTRACK_DB_USER`, `EDUTRACK_DB_PASSWORD`, `EDUTRACK_DB_NAME`, `EDUTRACK_DB_PORT`
+- `EDUTRACK_DB_PASSWORD` is mandatory. The app refuses to start without it unless you
+  explicitly set `EDUTRACK_ALLOW_EMPTY_PASSWORD=1` for a throwaway local database.
+- Set `EDUTRACK_DB_SSL_CA` to a CA bundle path to require a verified TLS connection to MySQL.
+- Never commit `.env` or real credentials; use a dedicated least-privilege MySQL user rather than `root`.
+>>>>>>> 1b0bf3bf1577513f72b70f33869b034694ff55b1
 
 4. Install the required packages
 
@@ -99,7 +128,6 @@ pip install -r requirements.txt
 ```bash
 python src/main.py
 ```
-
 ---
 
 ## 📷 Application Menu
