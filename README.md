@@ -18,7 +18,7 @@ Object-Oriented Programming, real MySQL database connectivity, and CRUD (Create,
 Update, Delete) operations through a clean, layered architecture:
 
 ```
-main.py (menu)  →  student_repository.py (SQL)  →  MySQL (students table)
+main.py (menu)  ->  student_repository.py (SQL)  ->  MySQL (students table)
                         ↑
         input_validators.py guards every prompt
 ```

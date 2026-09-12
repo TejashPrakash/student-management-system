@@ -134,7 +134,7 @@
           <h2 id="sql-title">Behind the scenes</h2>
           <p class="sub">The real app (Python + <code>mysql-connector-python</code>) runs these prepared statements
             against MySQL through a repository layer:</p>
-          <div class="sql-box"><span class="cm">-- database/schema.sql → students table</span>
+          <div class="sql-box"><span class="cm">-- database/schema.sql -> students table</span>
 <span class="kw">INSERT</span> INTO <span class="tbl">students</span> (first_name, last_name, gender, dob,
   `class`, section, roll_no, email, phone, address, admission_date)
 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
@@ -174,8 +174,8 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
       ];
 
       const GENDERS = ["Male", "Female", "Other"];
-      const EMAIL_RE = /^[^@\s]+@[^@\s.]+(\.[^@\s.]+)+$/;   // same as EMAIL_PATTERN in input_validators.py
-      const PHONE_RE = /^\+?[0-9][0-9 \-]{5,19}$/;          // same as PHONE_PATTERN in input_validators.py
+      const EMAIL_RE = /^[^@\s]+@[^@\s.]+(\.[^@\s.]+)+$/; // same as EMAIL_PATTERN in input_validators.py
+      const PHONE_RE = /^\+?[0-9][0-9 \-]{5,19}$/; // same as PHONE_PATTERN in input_validators.py
 
       const store = {
         load() {
@@ -185,7 +185,7 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
               const rows = JSON.parse(raw);
               if (Array.isArray(rows)) return rows;
             }
-          } catch (_) { /* corrupted storage → reseed */ }
+          } catch (_) { /* corrupted storage -> reseed */ }
           return SEED.map(row => Object.assign({}, row));
         },
         save(rows) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(rows)); } catch (_) { /* private mode */ } },
