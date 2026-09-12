@@ -109,7 +109,7 @@
             <button type="button" data-run="1" data-fill="[]">Add sample student</button>
             <button type="button" data-run="4">View all students</button>
             <button type="button" data-run="2" data-fill='["101"]'>Search roll 101</button>
-            <button type="button" data-run="6" data-fill='["1"]'>Delete flow (safe)</button>
+            <button type="button" data-run="6" data-fill='["1","N"]'>Delete flow (safe)</button>
           </div>
         </div>
       </section>
@@ -399,17 +399,22 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
           const raw = fillIndex < values.length ? String(values[fillIndex]) : String(field.fallback());
           fillIndex += 1;
           echo(raw);
-          const before = app.index;
+          const fieldBefore = field;
           feed(raw);
-          if (app.index === before) break; // fallback value was rejected (stop to avoid a loop)
+          // Break only on a rejected value: same field still asking. A finished
+          // flow may legitimately restart at index 0 when its handler opens a
+          // new flow (e.g. delete confirmation), which the index alone cannot see.
+          if (app.mode !== "field" || app.fields[app.index] === fieldBefore) break;
         }
       }
 
       // Menu actions - mirror handle_choice() in main.py
       function actionAdd(values) {
-        if (students.some(s => s.roll_no === values.roll_no)) {
-          sqlNote("ROLLBACK: duplicate roll_no violates UNIQUE constraint");
-          print("ERROR: Duplicate entry for roll_no " + values.roll_no + " (UNIQUE constraint).", "bad");
+        const clash = students.find(s => s.roll_no === values.roll_no);
+        const column = clash ? "roll_no" : students.find(s => s.email === values.email) ? "email" : students.find(s => s.phone === values.phone) ? "phone" : null;
+        if (column) {
+          sqlNote("ROLLBACK: duplicate " + column + " violates UNIQUE constraint");
+          print("ERROR: Duplicate entry for " + column + " (UNIQUE constraint).", "bad");
           showBanner();
           return;
         }
@@ -448,9 +453,11 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
       function actionUpdate(id, values) {
         const student = students.find(s => s.student_id === id);
         if (!student) { print("Student not found.", "bad"); showBanner(); return; }
-        if (students.some(s => s.roll_no === values.roll_no && s.student_id !== id)) {
-          sqlNote("ROLLBACK: duplicate roll_no violates UNIQUE constraint");
-          print("ERROR: Duplicate entry for roll_no " + values.roll_no + " (UNIQUE constraint).", "bad");
+        const clash = students.find(s => s.roll_no === values.roll_no && s.student_id !== id);
+        const column = clash ? "roll_no" : students.find(s => s.email === values.email && s.student_id !== id) ? "email" : students.find(s => s.phone === values.phone && s.student_id !== id) ? "phone" : null;
+        if (column) {
+          sqlNote("ROLLBACK: duplicate " + column + " violates UNIQUE constraint");
+          print("ERROR: Duplicate entry for " + column + " (UNIQUE constraint).", "bad");
           showBanner();
           return;
         }
