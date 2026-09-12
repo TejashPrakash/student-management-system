@@ -1,505 +1,622 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="EduTrack Student Management System - Interactive Demo">
-  <title>EduTrack - Student Management System</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="EduTrack - Student Management System Interactive Demo">
+    <title>EduTrack - Student Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    :root {
-      --primary-color: #2c3e50;
-      --secondary-color: #3498db;
-      --success-color: #27ae60;
-      --danger-color: #e74c3c;
-      --light-bg: #ecf0f1;
-      --white: #ffffff;
-      --text-dark: #2c3e50;
-      --text-light: #7f8c8d;
-      --border-color: #bdc3c7;
-      --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
-    }
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --white: #ffffff;
+            --dark-text: #2c3e50;
+            --light-text: #7f8c8d;
+            --border: #bdc3c7;
+        }
 
-    html, body {
-      height: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      color: var(--text-dark);
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark-text);
+        }
 
-    .container {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
 
-    header {
-      background: var(--primary-color);
-      color: var(--white);
-      padding: 2rem;
-      box-shadow: var(--shadow-lg);
-    }
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: var(--white);
+            padding: 40px 30px;
+            text-align: center;
+        }
 
-    header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-    }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
 
-    header p {
-      font-size: 1rem;
-      color: #bdc3c7;
-      font-weight: 300;
-    }
+        header p {
+            font-size: 1.1rem;
+            color: #bdc3c7;
+            margin-bottom: 5px;
+        }
 
-    main {
-      flex: 1;
-      padding: 2rem;
-      max-width: 1200px;
-      width: 100%;
-      margin: 0 auto;
-    }
+        .status {
+            font-size: 0.9rem;
+            color: #27ae60;
+            margin-top: 10px;
+        }
 
-    .dashboard {
-      display: grid;
-      grid-template-columns: 350px 1fr;
-      gap: 2rem;
-      margin-bottom: 2rem;
-    }
+        .status::before {
+            content: "● ";
+        }
 
-    .card {
-      background: var(--white);
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: var(--shadow);
-      transition: box-shadow 0.3s ease;
-    }
+        main {
+            padding: 30px;
+        }
 
-    .card:hover {
-      box-shadow: var(--shadow-lg);
-    }
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
 
-    .card h2 {
-      color: var(--primary-color);
-      font-size: 1.4rem;
-      margin-bottom: 1.5rem;
-      font-weight: 600;
-      border-bottom: 2px solid var(--secondary-color);
-      padding-bottom: 0.5rem;
-    }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    .form-group {
-      margin-bottom: 1rem;
-    }
+        .alert.show {
+            display: block;
+        }
 
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: var(--text-dark);
-      font-size: 0.9rem;
-    }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
 
-    .form-group input {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      font-size: 0.95rem;
-      font-family: inherit;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
 
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--secondary-color);
-      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-    }
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
 
-    .btn {
-      width: 100%;
-      padding: 0.75rem;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: inherit;
-    }
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
 
-    .btn-primary {
-      background: var(--secondary-color);
-      color: var(--white);
-      margin-top: 1rem;
-    }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
 
-    .btn-primary:hover {
-      background: #2980b9;
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
+        .card h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--secondary);
+        }
 
-    .btn-danger {
-      background: var(--danger-color);
-      color: var(--white);
-      padding: 0.5rem 1rem;
-      font-size: 0.85rem;
-      width: auto;
-    }
+        .form-group {
+            margin-bottom: 18px;
+        }
 
-    .btn-danger:hover {
-      background: #c0392b;
-    }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
 
-    .search-box {
-      margin-bottom: 1.5rem;
-    }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
 
-    .search-box input {
-      width: 100%;
-    }
+        input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
 
-    .stats {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-      background: linear-gradient(135deg, var(--secondary-color) 0%, #2980b9 100%);
-      color: var(--white);
-      border-radius: 6px;
-      font-weight: 600;
-    }
+        input::placeholder {
+            color: var(--light-text);
+        }
 
-    .stats-number {
-      font-size: 1.8rem;
-      font-weight: 700;
-      display: block;
-    }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            margin-top: 10px;
+        }
 
-    .stats-label {
-      font-size: 0.85rem;
-      opacity: 0.9;
-    }
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: var(--white);
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
 
-    th {
-      background: #34495e;
-      color: var(--white);
-      padding: 1rem;
-      text-align: left;
-      font-weight: 600;
-      font-size: 0.9rem;
-      border-bottom: 2px solid var(--border-color);
-    }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
 
-    td {
-      padding: 1rem;
-      border-bottom: 1px solid #ecf0f1;
-      font-size: 0.95rem;
-    }
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+            padding: 8px 16px;
+            width: auto;
+            font-size: 0.9rem;
+        }
 
-    tr:hover {
-      background: #f8f9fa;
-    }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
 
-    .student-name {
-      font-weight: 600;
-      color: var(--primary-color);
-    }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
 
-    .student-email {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      display: block;
-      margin-top: 0.25rem;
-    }
+        .stat-box {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
 
-    .empty-state {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-light);
-    }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
 
-    .alert {
-      padding: 1rem;
-      border-radius: 4px;
-      margin-bottom: 1rem;
-      display: none;
-      animation: slideIn 0.3s ease;
-    }
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
 
-    .alert.show {
-      display: block;
-    }
+        .search-wrapper {
+            margin-bottom: 20px;
+        }
 
-    .alert-success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
+        .search-wrapper input {
+            width: 100%;
+        }
 
-    .alert-error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
+        .table-wrapper {
+            overflow-x: auto;
+        }
 
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
 
-    footer {
-      background: var(--primary-color);
-      color: var(--text-light);
-      text-align: center;
-      padding: 1.5rem;
-      font-size: 0.9rem;
-      margin-top: 2rem;
-    }
+        thead {
+            background: #34495e;
+            color: var(--white);
+        }
 
-    footer a {
-      color: var(--secondary-color);
-      text-decoration: none;
-    }
+        th {
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-bottom: 2px solid var(--border);
+        }
 
-    @media (max-width: 768px) {
-      .dashboard {
-        grid-template-columns: 1fr;
-      }
-      header h1 {
-        font-size: 1.8rem;
-      }
-      main {
-        padding: 1rem;
-      }
-    }
-  </style>
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 0.95rem;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        tr:last-child td {
+            border-bottom: 2px solid var(--border);
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: var(--primary);
+            display: block;
+        }
+
+        .student-email {
+            font-size: 0.85rem;
+            color: var(--light-text);
+            display: block;
+            margin-top: 4px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--light-text);
+            font-size: 1.1rem;
+        }
+
+        footer {
+            background: #f8f9fa;
+            border-top: 1px solid var(--border);
+            padding: 20px 30px;
+            text-align: center;
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .btn-danger {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>EduTrack</h1>
-      <p>Student Management System - Interactive Demo</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1>🎓 EduTrack</h1>
+            <p>Student Management System</p>
+            <p class="status">Interactive Demo</p>
+        </header>
 
-    <main>
-      <div class="alert" id="alert"></div>
+        <main>
+            <div id="alertBox" class="alert"></div>
 
-      <div class="dashboard">
-        <div class="card">
-          <h2>Add Student</h2>
-          <form id="studentForm">
-            <div class="form-group">
-              <label for="name">Full Name</label>
-              <input type="text" id="name" name="name" required maxlength="80" placeholder="e.g., Aanya Sharma">
+            <div class="dashboard">
+                <!-- Form Card -->
+                <div class="card">
+                    <h2>Add New Student</h2>
+                    <form id="addStudentForm">
+                        <div class="form-group">
+                            <label for="studentName">Full Name *</label>
+                            <input type="text" id="studentName" name="name" placeholder="Enter student name" required maxlength="80">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rollNumber">Roll Number *</label>
+                            <input type="number" id="rollNumber" name="roll" placeholder="Enter roll number" required min="1">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="studentClass">Class/Grade *</label>
+                            <input type="text" id="studentClass" name="class" placeholder="e.g., 12 Science" required maxlength="20">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="studentEmail">Email Address *</label>
+                            <input type="email" id="studentEmail" name="email" placeholder="student@example.com" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">➕ Add Student</button>
+                    </form>
+                </div>
+
+                <!-- Records Card -->
+                <div class="card">
+                    <h2>Student Records</h2>
+
+                    <div class="stats-container">
+                        <div class="stat-box">
+                            <span class="stat-number" id="totalStudents">0</span>
+                            <span class="stat-label">Total Students</span>
+                        </div>
+                        <div class="stat-box" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); box-shadow: 0 4px 15px rgba(39, 174, 96, 0.2);">
+                            <span class="stat-number" id="displayedStudents">0</span>
+                            <span class="stat-label">Displayed</span>
+                        </div>
+                    </div>
+
+                    <div class="search-wrapper">
+                        <input type="search" id="searchInput" placeholder="🔍 Search by name, roll number, class, or email...">
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Roll Number</th>
+                                    <th>Class</th>
+                                    <th>Email</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="emptyMessage" class="empty-message" style="display: none;">
+                        📚 No students found. Add one to get started!
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-              <label for="roll">Roll Number</label>
-              <input type="number" id="roll" name="roll" required min="1" placeholder="e.g., 101">
-            </div>
-            <div class="form-group">
-              <label for="grade">Class/Grade</label>
-              <input type="text" id="grade" name="grade" required maxlength="20" placeholder="e.g., 12 Science">
-            </div>
-            <div class="form-group">
-              <label for="email">Email Address</label>
-              <input type="email" id="email" name="email" required placeholder="e.g., student@example.com">
-            </div>
-            <button type="submit" class="btn btn-primary">Add Student</button>
-          </form>
-        </div>
+        </main>
 
-        <div class="card">
-          <h2>Student Records</h2>
-          
-          <div class="stats">
-            <div>
-              <span class="stats-number" id="totalCount">0</span>
-              <span class="stats-label">Total Students</span>
-            </div>
-          </div>
+        <footer>
+            Data is stored locally in your browser | <a href="https://github.com/TejashPrakash/student-management-system" target="_blank">View Source Code</a>
+        </footer>
+    </div>
 
-          <div class="search-box">
-            <input type="search" id="searchInput" placeholder="Search by name, roll number, class, or email...">
-          </div>
+    <script>
+        const STORAGE_KEY = 'edutrack_demo_students';
+        
+        const INITIAL_DATA = [
+            { id: 1, name: 'Aanya Sharma', roll: 101, class: '12 Science', email: 'aanya.sharma@school.edu' },
+            { id: 2, name: 'Rohan Mehta', roll: 102, class: '12 Commerce', email: 'rohan.mehta@school.edu' },
+            { id: 3, name: 'Priya Desai', roll: 103, class: '12 Science', email: 'priya.desai@school.edu' },
+            { id: 4, name: 'Arjun Kumar', roll: 104, class: '12 Arts', email: 'arjun.kumar@school.edu' }
+        ];
 
-          <table>
-            <thead>
-              <tr>
-                <th>Student Name</th>
-                <th>Roll Number</th>
-                <th>Class</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="recordsTable"></tbody>
-          </table>
+        let students = [];
+        let searchTerm = '';
 
-          <div class="empty-state" id="emptyState">
-            <p>No students found. Add a student to get started!</p>
-          </div>
-        </div>
-      </div>
-    </main>
+        // Initialize Application
+        function init() {
+            loadStudents();
+            attachEventListeners();
+            renderTable();
+            updateStats();
+        }
 
-    <footer>
-      <p>EduTrack Demo - Data saved locally in browser only</p>
-    </footer>
-  </div>
+        // Load students from localStorage
+        function loadStudents() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            students = stored ? JSON.parse(stored) : INITIAL_DATA;
+        }
 
-  <script>
-    const STORAGE_KEY = 'edutrack_students';
-    
-    const DEFAULT_STUDENTS = [
-      { id: 1, name: 'Aanya Sharma', roll: '101', grade: '12 Science', email: 'aanya.sharma@school.com' },
-      { id: 2, name: 'Rohan Mehta', roll: '102', grade: '12 Commerce', email: 'rohan.mehta@school.com' },
-      { id: 3, name: 'Priya Desai', roll: '103', grade: '12 Science', email: 'priya.desai@school.com' }
-    ];
+        // Save students to localStorage
+        function saveStudents() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+        }
 
-    let students = [];
+        // Attach event listeners
+        function attachEventListeners() {
+            document.getElementById('addStudentForm').addEventListener('submit', handleAddStudent);
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+        }
 
-    function init() {
-      loadStudents();
-      attachEventListeners();
-      render();
-    }
+        // Show alert message
+        function showAlert(message, type = 'success') {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type} show`;
+            
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 3500);
+        }
 
-    function loadStudents() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      students = saved ? JSON.parse(saved) : DEFAULT_STUDENTS;
-    }
+        // Handle form submission
+        function handleAddStudent(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const name = form.name.value.trim();
+            const roll = parseInt(form.roll.value);
+            const studentClass = form.class.value.trim();
+            const email = form.email.value.trim();
 
-    function saveStudents() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
-    }
+            // Validation
+            if (!name || !roll || !studentClass || !email) {
+                showAlert('❌ Please fill in all fields', 'danger');
+                return;
+            }
 
-    function showAlert(message, type = 'success') {
-      const alertEl = document.getElementById('alert');
-      alertEl.textContent = message;
-      alertEl.className = `alert alert-${type} show`;
-      setTimeout(() => alertEl.classList.remove('show'), 3000);
-    }
+            // Check for duplicate roll number
+            if (students.some(s => s.roll === roll)) {
+                showAlert('❌ Roll number already exists!', 'danger');
+                return;
+            }
 
-    function attachEventListeners() {
-      document.getElementById('studentForm').addEventListener('submit', handleAddStudent);
-      document.getElementById('searchInput').addEventListener('input', handleSearch);
-    }
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('❌ Please enter a valid email address', 'danger');
+                return;
+            }
 
-    function handleAddStudent(e) {
-      e.preventDefault();
-      const form = e.target;
-      const name = form.name.value.trim();
-      const roll = form.roll.value.trim();
-      const grade = form.grade.value.trim();
-      const email = form.email.value.trim();
+            // Add new student
+            const newStudent = {
+                id: Date.now(),
+                name: name,
+                roll: roll,
+                class: studentClass,
+                email: email
+            };
 
-      if (!name || !roll || !grade || !email) {
-        showAlert('Please fill in all fields', 'error');
-        return;
-      }
+            students.push(newStudent);
+            saveStudents();
+            
+            // Reset form
+            form.reset();
+            renderTable();
+            updateStats();
+            showAlert(`✅ ${name} added successfully!`, 'success');
+        }
 
-      if (students.some(s => s.roll === roll)) {
-        showAlert('Roll number already exists', 'error');
-        return;
-      }
+        // Handle search
+        function handleSearch(e) {
+            searchTerm = e.target.value.toLowerCase();
+            renderTable();
+        }
 
-      const newStudent = {
-        id: Date.now(),
-        name: name,
-        roll: roll,
-        grade: grade,
-        email: email
-      };
+        // Delete student
+        function deleteStudent(id) {
+            const student = students.find(s => s.id === id);
+            if (confirm(`Are you sure you want to remove ${student.name}?`)) {
+                students = students.filter(s => s.id !== id);
+                saveStudents();
+                renderTable();
+                updateStats();
+                showAlert(`✅ ${student.name} removed successfully!`, 'success');
+            }
+        }
 
-      students.push(newStudent);
-      saveStudents();
-      form.reset();
-      render();
-      showAlert(`${name} added successfully!`, 'success');
-    }
+        // Filter students based on search term
+        function getFilteredStudents() {
+            if (!searchTerm) return students;
+            
+            return students.filter(student => 
+                student.name.toLowerCase().includes(searchTerm) ||
+                student.roll.toString().includes(searchTerm) ||
+                student.class.toLowerCase().includes(searchTerm) ||
+                student.email.toLowerCase().includes(searchTerm)
+            );
+        }
 
-    function handleSearch(e) {
-      render(e.target.value.toLowerCase());
-    }
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('studentsTableBody');
+            const emptyMessage = document.getElementById('emptyMessage');
+            const filtered = getFilteredStudents();
 
-    function deleteStudent(id) {
-      const student = students.find(s => s.id === id);
-      if (confirm(`Are you sure you want to remove ${student.name}?`)) {
-        students = students.filter(s => s.id !== id);
-        saveStudents();
-        render();
-        showAlert(`${student.name} removed successfully!`, 'success');
-      }
-    }
+            tbody.innerHTML = '';
 
-    function render(searchTerm = '') {
-      const tbody = document.getElementById('recordsTable');
-      const emptyState = document.getElementById('emptyState');
-      const totalCount = document.getElementById('totalCount');
+            if (filtered.length === 0) {
+                emptyMessage.style.display = 'block';
+                return;
+            }
 
-      let filtered = students;
-      if (searchTerm) {
-        filtered = students.filter(s => 
-          s.name.toLowerCase().includes(searchTerm) ||
-          s.roll.toLowerCase().includes(searchTerm) ||
-          s.grade.toLowerCase().includes(searchTerm) ||
-          s.email.toLowerCase().includes(searchTerm)
-        );
-      }
+            emptyMessage.style.display = 'none';
 
-      totalCount.textContent = students.length;
-      tbody.innerHTML = '';
+            filtered.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="student-name">${escapeHtml(student.name)}</div>
+                        <div class="student-email">${escapeHtml(student.email)}</div>
+                    </td>
+                    <td><strong>${student.roll}</strong></td>
+                    <td>${escapeHtml(student.class)}</td>
+                    <td>${escapeHtml(student.email)}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteStudent(${student.id})">🗑️ Remove</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
 
-      if (filtered.length === 0) {
-        emptyState.style.display = 'block';
-        return;
-      }
+            document.getElementById('displayedStudents').textContent = filtered.length;
+        }
 
-      emptyState.style.display = 'none';
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalStudents').textContent = students.length;
+        }
 
-      filtered.forEach(student => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>
-            <div class="student-name">${escapeHtml(student.name)}</div>
-            <span class="student-email">${escapeHtml(student.email)}</span>
-          </td>
-          <td>${escapeHtml(student.roll)}</td>
-          <td>${escapeHtml(student.grade)}</td>
-          <td>
-            <button class="btn btn-danger" onclick="deleteStudent(${student.id})">Remove</button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    window.addEventListener('DOMContentLoaded', init);
-  </script>
+        // Start the app when DOM is ready
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
